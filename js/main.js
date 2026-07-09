@@ -114,6 +114,27 @@ if (!reduced && typeof window.Lenis !== 'undefined'){
   }
 })();
 
+/* ════════════ MOBILE MENU · the index of chapters ════════════ */
+(function(){
+  var btn = document.getElementById('menuBtn'), menu = document.getElementById('mobileMenu');
+  if (!btn || !menu) return;
+  var pathname = location.pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
+  menu.querySelectorAll('nav a').forEach(function(a){
+    if (a.getAttribute('href') === pathname) a.classList.add('active');
+  });
+  function set(open){
+    document.body.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    menu.setAttribute('aria-hidden', String(!open));
+    if (lenis){ open ? lenis.stop() : lenis.start(); }
+  }
+  btn.addEventListener('click', function(){ set(!document.body.classList.contains('menu-open')); });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ set(false); }); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && document.body.classList.contains('menu-open')) set(false);
+  });
+})();
+
 /* ════════════ SPLIT HEADINGS ════════════ */
 document.querySelectorAll('h2.split').forEach(function(h){
   var words = h.textContent.trim().split(/\s+/);

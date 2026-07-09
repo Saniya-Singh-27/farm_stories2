@@ -126,6 +126,33 @@ nav.chapters a.active::after{content:'';position:absolute;left:12px;right:12px;b
 .nav-cta:hover{background:var(--pine)}
 @media(max-width:1020px){nav.chapters{display:none}.brand-tag{display:none}}
 
+/* ── mobile menu · the index of chapters ── */
+.menu-btn{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;
+  background:transparent;border:1.5px solid var(--ink);border-radius:3px;cursor:pointer;padding:0 10px;flex-shrink:0}
+.menu-btn span{display:block;height:2px;background:var(--ink);border-radius:2px;transition:transform .3s, opacity .3s}
+@media(max-width:1020px){.menu-btn{display:flex}.nav-cta{display:none}}
+body.menu-open .menu-btn span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+body.menu-open .menu-btn span:nth-child(2){opacity:0}
+body.menu-open .menu-btn span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{position:fixed;inset:0;z-index:140;background:var(--paper);display:flex;flex-direction:column;
+  justify-content:center;padding:90px 34px 40px;opacity:0;visibility:hidden;transform:translateY(-12px);
+  transition:opacity .35s ease, transform .35s ease, visibility .35s}
+body.menu-open .mobile-menu{opacity:1;visibility:visible;transform:none}
+.mobile-menu::after{content:'';position:absolute;inset:14px;border:1.4px solid var(--ink);pointer-events:none}
+.mobile-menu .mm-kicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-faint);margin-bottom:18px}
+.mobile-menu nav{display:flex;flex-direction:column}
+.mobile-menu nav a{font-family:var(--serif);font-weight:400;font-size:clamp(26px,7vw,34px);color:var(--ink);
+  text-decoration:none;padding:12px 0;border-bottom:1px dashed var(--line);display:flex;align-items:baseline;gap:14px}
+.mobile-menu nav a em{font-family:var(--sans);font-style:normal;font-size:12px;color:var(--ink-faint);
+  letter-spacing:.08em}
+.mobile-menu nav a.active{color:var(--pine)}
+.mobile-menu nav a.active::after{content:'✳';color:var(--yellow);font-size:16px}
+.mobile-menu .mm-cta{margin-top:30px;align-self:flex-start}
+.mobile-menu .mm-fine{margin-top:auto;font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-faint)}
+body.menu-open{overflow:hidden}
+body.menu-open header{z-index:150}
+
 /* stream signature */
 .stream-wrap{position:fixed;left:0;top:0;bottom:0;width:86px;z-index:0;pointer-events:none}
 @media(max-width:1150px){.stream-wrap{display:none}}
