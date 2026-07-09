@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Portal — The Farm Stories</title>
-<meta name="description" content="One atlas for every estate we keep — verified, in verification, and being scouted across South India.">
+<meta name="description" content="Find your farm, find your story — filter The Farm Stories estates by project or location, explore the map, and book a site visit.">
 <meta name="theme-color" content="#F4EFE4">
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,110 +62,196 @@
 
 <main id="top">
 
-  <section class="chapter page" id="portal">
-    <div class="chapter-head reveal"><span class="chapter-no">The Portal</span><h2 class="split">One atlas, every estate.</h2></div>
-    <p class="chapter-intro reveal">Farmland from across South India, gathered under one standard — <em>a project cannot join the atlas until its story checks out.</em> Point at the map, or filter the shelf.</p>
+  <section class="chapter page" id="portalRoot">
+    <div class="chapter-head reveal"><span class="chapter-no">The Portal</span><h2 class="split">Find your farm, find your story.</h2></div>
+    <p class="chapter-intro reveal">Every estate we keep, on one map — <em>filter by project or by location, click a pin, and come stand in the one that speaks to you.</em></p>
 
-    <div class="atlas-wrap">
-      <div class="atlas reveal" id="atlasBox">
-        <p class="atlas-title">The Portal Atlas · South India</p>
-        <svg viewBox="0 0 520 640" id="indiaMap" aria-label="Map of India showing The Farm Stories project locations">
-          <g class="gridlines">
-            <line class="grid-line" x1="40" y1="120" x2="500" y2="120"/><line class="grid-line" x1="30" y1="240" x2="500" y2="240"/>
-            <line class="grid-line" x1="30" y1="360" x2="470" y2="360"/><line class="grid-line" x1="60" y1="480" x2="420" y2="480"/>
-            <line class="grid-line" x1="140" y1="40" x2="140" y2="600"/><line class="grid-line" x1="260" y1="30" x2="260" y2="620"/><line class="grid-line" x1="380" y1="60" x2="380" y2="500"/>
-          </g>
-          <path class="india-outline" d="M235,28 Q262,38 258,62 Q290,86 316,96 Q352,118 386,136 Q402,150 396,168 Q416,158 432,164 Q472,150 500,168 Q512,180 498,192 Q478,188 468,200 Q486,222 474,238 Q458,252 448,236 Q444,214 430,206 Q414,200 410,214 Q404,236 392,224 Q382,206 368,204 Q356,238 372,262 Q346,286 322,320 Q296,368 272,412 Q252,462 240,506 Q232,544 226,566 Q220,590 208,588 Q196,566 192,536 Q180,496 168,452 Q152,404 144,360 Q132,320 122,292 Q108,262 96,252 Q68,258 56,240 Q52,222 72,214 Q60,196 76,186 Q96,178 108,186 Q116,170 108,152 Q124,118 148,102 Q170,84 186,66 Q205,44 235,28 Z"/>
-          <g class="mtn">
-            <path d="M200,74 l10,-12 l10,12 M226,66 l10,-12 l10,12 M252,66 l9,-11 l9,11 M282,80 l9,-11 l9,11 M312,96 l9,-10 l9,10 M342,112 l9,-10 l9,10"/>
-          </g>
-          <g id="markers"></g>
-        </svg>
-        <div class="atlas-legend">
-          <span><i class="leg-dot v"></i>Verified &amp; open</span>
-          <span><i class="leg-dot p"></i>In verification</span>
-          <span><i class="leg-dot g"></i>Being scouted</span>
+    <div class="portal-layout reveal">
+
+      <!-- ── sidebar : filters + visit ── -->
+      <aside class="portal-sidebar">
+        <div class="filter-panel">
+          <h3>Filter the estates</h3>
+          <div class="fg"><label class="fl" for="fProject">Project</label>
+            <select class="fsel" id="fProject">
+              <option value="all">All projects</option>
+              <option value="mm">Mango Meadows</option>
+              <option value="coorg">Coffee Canopy</option>
+              <option value="sak">Areca Vale</option>
+              <option value="way">Pepper Hollow</option>
+              <option value="hos">Lantern Lake</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl" for="fRegion">Location</label>
+            <select class="fsel" id="fRegion">
+              <option value="all">All of South India</option>
+              <option value="tn">Tamil Nadu</option>
+              <option value="ka">Karnataka</option>
+              <option value="kl">Kerala</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl" for="fStatus">Status</label>
+            <select class="fsel" id="fStatus">
+              <option value="all">Any status</option>
+              <option value="open">Now open</option>
+              <option value="pending">In verification</option>
+              <option value="scouted">Being scouted</option>
+            </select>
+          </div>
+          <button class="btn btn-ink" id="fSearch">Search the shelf</button>
         </div>
-        <div class="map-tip" id="mapTip"></div>
-      </div>
+        <div class="visit-cta">
+          <h4>Schedule a site visit</h4>
+          <p>The best way to know a farm is to stand in it. Book a guided morning with our team — documents on the table, no pitch.</p>
+          <a class="btn btn-gold" href="/#chapter">Book a visit</a>
+        </div>
+      </aside>
 
+      <!-- ── map + listings ── -->
       <div>
-        <div class="filters reveal" aria-label="Filter the shelf">
-          <div class="fgroup"><span class="flabel">Status</span>
-            <div class="fbtns" data-filter="status">
-              <button class="fbtn on" data-v="all">All</button>
-              <button class="fbtn" data-v="verified">Verified</button>
-              <button class="fbtn" data-v="pending">In verification</button>
-              <button class="fbtn" data-v="scouted">Being scouted</button>
-            </div>
-          </div>
-          <div class="fgroup"><span class="flabel">Region</span>
-            <div class="fbtns" data-filter="region">
-              <button class="fbtn on" data-v="all">All</button>
-              <button class="fbtn" data-v="tn">Tamil Nadu</button>
-              <button class="fbtn" data-v="ka">Karnataka</button>
-              <button class="fbtn" data-v="kl">Kerala</button>
-            </div>
-          </div>
-          <div class="fgroup"><span class="flabel">The land</span>
-            <div class="fbtns" data-filter="crop">
-              <button class="fbtn on" data-v="all">All</button>
-              <button class="fbtn" data-v="mango">Mango</button>
-              <button class="fbtn" data-v="coffee">Coffee</button>
-              <button class="fbtn" data-v="areca">Areca &amp; pepper</button>
-            </div>
-          </div>
+        <p class="results-note" id="portalNote">Showing all five estates.</p>
+
+        <div class="map-panel">
+          <div class="map-panel-title">The estate map — click a pin to read its note</div>
+          <div id="mapTip" class="map-tooltip" role="status"></div>
+          <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" id="portalMap" role="img" aria-label="Map of South India with The Farm Stories project pins">
+            <!-- India silhouette -->
+            <path d="M220,30 L265,25 L310,32 L355,45 L395,65 L420,95 L432,130 L425,165 L445,200 L455,240 L448,275 L432,310 L415,342 L392,370 L368,392 L342,410 L318,428 L295,448 L272,465 L250,480 L228,460 L205,438 L180,410 L158,382 L138,352 L118,320 L100,286 L88,252 L84,218 L90,185 L82,155 L95,125 L118,100 L108,72 L125,48 L152,34 Z"
+              fill="#F0E9D8" stroke="#1C1C1A" stroke-width="1.6" stroke-linejoin="round"/>
+            <line x1="180" y1="220" x2="290" y2="214" stroke="#C9B99A" stroke-width=".6" opacity=".5"/>
+            <line x1="160" y1="310" x2="285" y2="300" stroke="#C9B99A" stroke-width=".6" opacity=".5"/>
+
+            <!-- Mango Meadows · Agali (open) -->
+            <g class="pin" data-project="mm" tabindex="0" role="button"
+               data-title="Mango Meadows" data-info="Agali, Tamil Nadu · 7 acres · 26 plots · 300+ mature mango trees · now open">
+              <circle class="halo" cx="262" cy="358" r="14" fill="#E8B23A" opacity=".2"/>
+              <circle cx="262" cy="358" r="8" fill="#E8B23A" opacity=".45"/>
+              <circle cx="262" cy="358" r="5" fill="#E8B23A" stroke="#1C1C1A" stroke-width="1.2"/>
+              <circle cx="262" cy="358" r="1.8" fill="#fff"/>
+              <text x="262" y="382" text-anchor="middle">AGALI</text>
+            </g>
+            <!-- Coffee Canopy · Coorg (in verification) -->
+            <g class="pin soon" data-project="coorg" tabindex="0" role="button"
+               data-title="Coffee Canopy" data-info="Kodagu (Coorg), Karnataka · shade-grown coffee · in verification">
+              <circle class="halo" cx="226" cy="296" r="9" fill="#33422F" opacity=".3"/>
+              <circle cx="226" cy="296" r="4.5" fill="#F4EFE4" stroke="#33422F" stroke-width="1.6" stroke-dasharray="2.5 2.5"/>
+              <text x="226" y="286" text-anchor="middle">COORG</text>
+            </g>
+            <!-- Areca Vale · Sakleshpur (in verification) -->
+            <g class="pin soon" data-project="sak" tabindex="0" role="button"
+               data-title="Areca Vale" data-info="Sakleshpur, Karnataka · areca &amp; pepper · in verification">
+              <circle class="halo" cx="240" cy="272" r="9" fill="#33422F" opacity=".3"/>
+              <circle cx="240" cy="272" r="4.5" fill="#F4EFE4" stroke="#33422F" stroke-width="1.6" stroke-dasharray="2.5 2.5"/>
+              <text x="258" y="264" text-anchor="middle">SAKLESHPUR</text>
+            </g>
+            <!-- Pepper Hollow · Wayanad (scouted) -->
+            <g class="pin soon" data-project="way" tabindex="0" role="button"
+               data-title="Pepper Hollow" data-info="Wayanad, Kerala · pepper &amp; cardamom slope · being scouted">
+              <circle class="halo" cx="213" cy="342" r="8" fill="#8B8577" opacity=".3"/>
+              <circle cx="213" cy="342" r="4" fill="#D9CFBB" stroke="#8B8577" stroke-width="1.4"/>
+              <text x="204" y="332" text-anchor="middle">WAYANAD</text>
+            </g>
+            <!-- Lantern Lake · Hosur (scouted) -->
+            <g class="pin soon" data-project="hos" tabindex="0" role="button"
+               data-title="Lantern Lake" data-info="Hosur, Tamil Nadu · old mango rows by a tank · being scouted">
+              <circle class="halo" cx="284" cy="312" r="8" fill="#8B8577" opacity=".3"/>
+              <circle cx="284" cy="312" r="4" fill="#D9CFBB" stroke="#8B8577" stroke-width="1.4"/>
+              <text x="302" y="306" text-anchor="middle">HOSUR</text>
+            </g>
+
+            <!-- compass + legend -->
+            <text x="540" y="45" font-family="Karla,sans-serif" font-size="11" fill="#8B8577">N ↑</text>
+            <g class="map-legend">
+              <circle cx="100" cy="352" r="5" fill="#E8B23A" stroke="#1C1C1A" stroke-width="1"/>
+              <text x="112" y="356">Now open</text>
+              <circle cx="100" cy="370" r="4.5" fill="#F4EFE4" stroke="#33422F" stroke-width="1.4" stroke-dasharray="2.5 2.5"/>
+              <text x="112" y="374">In verification</text>
+              <circle cx="100" cy="388" r="4" fill="#D9CFBB" stroke="#8B8577" stroke-width="1.2"/>
+              <text x="112" y="392">Being scouted</text>
+            </g>
+          </svg>
         </div>
-        <p class="results-note reveal" id="resultsNote">Showing every story on the shelf.</p>
-        <div class="shelf reveal" id="shelf">
-          <article class="book tilt" data-id="mm" data-status="verified" data-region="tn" data-crop="mango">
-            <span class="spine"></span>
-            <p class="no">Story No. 001 · Open</p>
-            <h3>Mango Meadows</h3>
-            <p class="where">Agali, Nilgiris foothills · Tamil Nadu</p>
-            <p>A mature managed mango orchard — 7 acres, 300+ trees, 26 families. The first estate admitted, and the standard the rest are measured against.</p>
-            <div class="book-foot"><span class="badge verified">Verified</span><a class="read" href="/projects">Read the story</a></div>
+
+        <div class="listing-cards" id="listingCards">
+          <!-- Mango Meadows -->
+          <article class="listing-card" data-project="mm" data-region="tn" data-status="open" data-href="/projects" tabindex="0" role="link" aria-label="Mango Meadows — read the story">
+            <div class="lcard-img">
+              <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80" alt="Mango Meadows orchard" loading="lazy" decoding="async">
+              <span class="lbadge">Now open</span>
+            </div>
+            <div class="lcard-body">
+              <div class="lcard-name">Mango Meadows</div>
+              <div class="lcard-loc">Agali, Tamil Nadu · 45 km from Coimbatore</div>
+              <div class="lcard-specs">
+                <div class="lspec"><strong>7 acres</strong><span>Total area</span></div>
+                <div class="lspec"><strong>26</strong><span>Plots</span></div>
+                <div class="lspec"><strong>300+</strong><span>Mature trees</span></div>
+              </div>
+            </div>
           </article>
-          <article class="book pending tilt" data-id="coorg" data-status="pending" data-region="ka" data-crop="coffee">
-            <span class="spine"></span>
-            <p class="no">Story No. 002 · In verification</p>
-            <h3>Coffee Canopy</h3>
-            <p class="where">Kodagu (Coorg) · Karnataka</p>
-            <p>Third-generation shade-grown coffee under old silver oaks. Its papers are being read, its slopes walked, its history traced before it can join the shelf.</p>
-            <div class="book-foot"><span class="badge pending">Being read</span></div>
+          <!-- Coffee Canopy -->
+          <article class="listing-card soon" data-project="coorg" data-region="ka" data-status="pending">
+            <div class="lcard-img">
+              <div class="lcard-soonbg">In verification</div>
+              <span class="lbadge soon">Being read</span>
+            </div>
+            <div class="lcard-body">
+              <div class="lcard-name">Coffee Canopy</div>
+              <div class="lcard-loc">Kodagu (Coorg), Karnataka</div>
+              <div class="lcard-specs">
+                <div class="lspec"><strong>Coffee</strong><span>Shade-grown</span></div>
+                <div class="lspec"><strong>3rd gen</strong><span>Estate</span></div>
+              </div>
+            </div>
           </article>
-          <article class="book pending tilt" data-id="sak" data-status="pending" data-region="ka" data-crop="areca">
-            <span class="spine"></span>
-            <p class="no">Story No. 003 · In verification</p>
-            <h3>Areca Vale</h3>
-            <p class="where">Sakleshpur, Hassan · Karnataka</p>
-            <p>A stream-fed areca and pepper holding beneath the Western Ghats. Verification began this month; the story will be told only when it is certain.</p>
-            <div class="book-foot"><span class="badge pending">Being read</span></div>
+          <!-- Areca Vale -->
+          <article class="listing-card soon" data-project="sak" data-region="ka" data-status="pending">
+            <div class="lcard-img">
+              <div class="lcard-soonbg">In verification</div>
+              <span class="lbadge soon">Being read</span>
+            </div>
+            <div class="lcard-body">
+              <div class="lcard-name">Areca Vale</div>
+              <div class="lcard-loc">Sakleshpur, Hassan · Karnataka</div>
+              <div class="lcard-specs">
+                <div class="lspec"><strong>Areca</strong><span>&amp; pepper</span></div>
+                <div class="lspec"><strong>Stream-fed</strong><span>Western Ghats</span></div>
+              </div>
+            </div>
           </article>
-          <article class="book scouted tilt" data-id="way" data-status="scouted" data-region="kl" data-crop="areca">
-            <span class="spine"></span>
-            <p class="no">Unnumbered · Being scouted</p>
-            <h3>Pepper Hollow</h3>
-            <p class="where">Wayanad · Kerala</p>
-            <p>A quiet pepper and cardamom slope our readers keep returning to. Too early for promises — the land is still being listened to.</p>
-            <div class="book-foot"><span class="badge pending">Scouting</span></div>
+          <!-- Pepper Hollow -->
+          <article class="listing-card soon" data-project="way" data-region="kl" data-status="scouted">
+            <div class="lcard-img">
+              <div class="lcard-soonbg">Being scouted</div>
+              <span class="lbadge soon">Scouting</span>
+            </div>
+            <div class="lcard-body">
+              <div class="lcard-name">Pepper Hollow</div>
+              <div class="lcard-loc">Wayanad, Kerala</div>
+              <div class="lcard-specs">
+                <div class="lspec"><strong>Pepper</strong><span>&amp; cardamom</span></div>
+                <div class="lspec"><strong>Early</strong><span>Pages</span></div>
+              </div>
+            </div>
           </article>
-          <article class="book scouted tilt" data-id="hos" data-status="scouted" data-region="tn" data-crop="mango">
-            <span class="spine"></span>
-            <p class="no">Unnumbered · Being scouted</p>
-            <h3>Lantern Lake</h3>
-            <p class="where">Hosur · Tamil Nadu</p>
-            <p>Old mango rows around a tank that holds through summer, an hour from Bangalore. Early pages; nothing signed, nothing sold.</p>
-            <div class="book-foot"><span class="badge pending">Scouting</span></div>
-          </article>
-          <article class="book invite" data-static="1">
-            <p class="no">For landowners</p>
-            <h3>Does your land have a story worth keeping?</h3>
-            <p>We admit a small number of estates each year — verified, documented and introduced to families who will care for them.</p>
-            <a class="btn btn-ghost" href="/#chapter">Tell us about your land</a>
+          <!-- Lantern Lake -->
+          <article class="listing-card soon" data-project="hos" data-region="tn" data-status="scouted">
+            <div class="lcard-img">
+              <div class="lcard-soonbg">Being scouted</div>
+              <span class="lbadge soon">Scouting</span>
+            </div>
+            <div class="lcard-body">
+              <div class="lcard-name">Lantern Lake</div>
+              <div class="lcard-loc">Hosur, Tamil Nadu · 1 hr from Bangalore</div>
+              <div class="lcard-specs">
+                <div class="lspec"><strong>Mango</strong><span>Old rows</span></div>
+                <div class="lspec"><strong>Tank</strong><span>Holds all summer</span></div>
+              </div>
+            </div>
           </article>
         </div>
       </div>
+
     </div>
   </section>
 </main>
@@ -196,8 +282,6 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="/js/vendor/gsap.min.js" defer></script>
-<script src="/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="/js/vendor/lenis.min.js" defer></script>
 <script src="/js/main.js" defer></script>
 </body>

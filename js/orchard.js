@@ -254,13 +254,16 @@ function build(canvas, opts){
 
   var dawn = new THREE.Color(0xffc07a), noon = new THREE.Color(0xfff4e0);
   var sunCol = new THREE.Color();
+  var pSmooth = 0;
 
   function frame(){
     requestAnimationFrame(frame);
     if (!running) return;
     resize();
     var t = clock.getElapsedTime();
-    var p = reduced ? .5 : (window.__orchardProgress || 0);
+    // ease toward the raw scroll value — the scene does its own scrubbing
+    pSmooth += (((reduced ? .5 : window.__orchardProgress) || 0) - pSmooth) * .07;
+    var p = pSmooth;
 
     // the model rises to meet you, then the camera walks around it
     var rise = Math.min(1, p * 5);

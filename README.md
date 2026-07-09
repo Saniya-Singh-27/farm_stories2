@@ -12,7 +12,7 @@ Nilgiris foothills at Agali (26 families, 30-year-old trees, documentation first
 | `/` | Home — intro book (3D page turns), ink-to-orchard hero morph with lazy video, trust strip, The Beginning teaser, Three.js miniature orchard, bookshelf teaser, Write Your Chapter form |
 | `/about` | About us — the founding story, house rules, three pillars, quote |
 | `/projects` | Our Projects — the bookshelf; Story One opens a flipbook reader with 7 turning pages; My Farm Journal preview |
-| `/portal` | The Portal — the project **aggregator**: a South-India atlas with one marker per estate (Mango Meadows, Coffee Canopy, Areca Vale, Pepper Hollow, Lantern Lake) synced to a filterable shelf (status / region / land) |
+| `/portal` | The Portal — the project **aggregator**: sidebar filters (project / location / status), a South-India map with one pin per estate and click-to-read tooltips, and listing cards that stay in step with the filters (Mango Meadows, Coffee Canopy, Areca Vale, Pepper Hollow, Lantern Lake) |
 | `/community` | The Community — "Another chapter is being written." + Notify me |
 | `/agritech` | Agri-tech — "The instruments are being planted." + Notify me |
 | `/whats-new` | What's New — ticker, dispatches, gatherings with one-tap RSVP, newsletter |

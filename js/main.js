@@ -23,9 +23,12 @@ if (hasGsap){
   gsap.registerPlugin(ScrollTrigger);
   window.addEventListener('load', function(){ ScrollTrigger.refresh(); });
 }
-if (!reduced && typeof window.Lenis !== 'undefined'){
-  lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.92, smoothWheel: true });
+// Lenis only where it earns its keep: desktop pointers. Touch devices keep
+// native (compositor-thread) scrolling, which is both smoother and cheaper.
+if (!reduced && !isTouch && typeof window.Lenis !== 'undefined'){
+  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1, smoothWheel: true });
   if (hasGsap){
+    // one shared ticker drives both Lenis and ScrollTrigger — no second rAF loop
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(function(time){ lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
@@ -488,102 +491,93 @@ document.querySelectorAll('.shelf-book.story-soon').forEach(function(b){
 });
 
 /* ════════════════════════════════════════════════
-   THE PORTAL · atlas of projects (portal page)
-   One marker per project — the aggregator works at
-   the level of estates, not individual plots.
+   THE PORTAL · the estate aggregator (portal page)
+   Filter by project or by location; the map and the
+   listing cards stay in step. Plain DOM, no triggers.
 ════════════════════════════════════════════════ */
-(function atlas(){
-  var svg = document.getElementById('indiaMap');
-  if (!svg) return;
-  var NS = 'http://www.w3.org/2000/svg';
-  var mk = document.getElementById('markers');
+(function portal(){
+  var root = document.getElementById('portalRoot');
+  if (!root) return;
+  var selProject = document.getElementById('fProject');
+  var selRegion = document.getElementById('fRegion');
+  var selStatus = document.getElementById('fStatus');
+  var searchBtn = document.getElementById('fSearch');
+  var note = document.getElementById('portalNote');
   var tip = document.getElementById('mapTip');
-  var atlasBox = document.getElementById('atlasBox');
-  var note = document.getElementById('resultsNote');
+  var mapPanel = tip.closest('.map-panel');
+  var cards = [].slice.call(document.querySelectorAll('.listing-card[data-project]'));
+  var pins = [].slice.call(document.querySelectorAll('#portalMap .pin'));
+  var NAMES = { mm: 'Mango Meadows', coorg: 'Coffee Canopy', sak: 'Areca Vale', way: 'Pepper Hollow', hos: 'Lantern Lake' };
 
-  var PROJECTS = [
-    { id: 'mm',    name: 'Mango Meadows · Agali',      x: 214, y: 540, cls: 'verified' },
-    { id: 'coorg', name: 'Coffee Canopy · Coorg',      x: 186, y: 498, cls: 'pending' },
-    { id: 'sak',   name: 'Areca Vale · Sakleshpur',    x: 182, y: 476, cls: 'pending' },
-    { id: 'way',   name: 'Pepper Hollow · Wayanad',    x: 200, y: 518, cls: 'ghost' },
-    { id: 'hos',   name: 'Lantern Lake · Hosur',       x: 238, y: 498, cls: 'ghost' }
-  ];
-  PROJECTS.forEach(function(f){
-    var g = document.createElementNS(NS, 'g');
-    g.setAttribute('class', 'marker ' + f.cls);
-    g.dataset.id = f.id;
-    var halo = document.createElementNS(NS, 'circle');
-    halo.setAttribute('class', 'halo'); halo.setAttribute('cx', f.x); halo.setAttribute('cy', f.y); halo.setAttribute('r', 9);
-    var dot = document.createElementNS(NS, 'circle');
-    dot.setAttribute('class', 'dot'); dot.setAttribute('cx', f.x); dot.setAttribute('cy', f.y);
-    dot.setAttribute('r', f.cls === 'ghost' ? 5 : 8);
-    g.appendChild(halo); g.appendChild(dot);
-    if (f.cls !== 'ghost'){
-      var t = document.createElementNS(NS, 'text');
-      t.setAttribute('x', f.x + 14); t.setAttribute('y', f.y + 4);
-      t.textContent = f.name.split('·')[1].trim();
-      g.appendChild(t);
-    }
-    mk.appendChild(g);
-    g.addEventListener('mouseenter', function(){ showTip(f, dot); });
+  function cardFor(id){
+    for (var i = 0; i < cards.length; i++) if (cards[i].dataset.project === id) return cards[i];
+    return null;
+  }
+  function apply(fromSearch){
+    var p = selProject.value, r = selRegion.value, s = selStatus.value, shown = 0, last = null;
+    cards.forEach(function(c){
+      var ok = (p === 'all' || c.dataset.project === p)
+        && (r === 'all' || c.dataset.region === r)
+        && (s === 'all' || c.dataset.status === s);
+      c.classList.toggle('dim', !ok);
+      if (ok){ shown++; last = c; }
+    });
+    pins.forEach(function(g){
+      var c = cardFor(g.dataset.project);
+      g.classList.toggle('dim', !c || c.classList.contains('dim'));
+    });
+    note.textContent = shown === cards.length ? 'Showing all five estates.'
+      : shown === 0 ? 'No estate matches — loosen a filter and look again.'
+      : shown === 1 ? 'One estate on the shelf: ' + last.querySelector('.lcard-name').textContent + '.'
+      : 'Showing ' + shown + ' estates on the shelf.';
+    if (fromSearch) toast(shown === 0 ? 'The shelf is quiet — try loosening a filter.'
+      : shown + (shown === 1 ? ' estate' : ' estates') + ' found. The pins on the map show where.');
+  }
+  [selProject, selRegion, selStatus].forEach(function(sel){
+    sel.addEventListener('change', function(){ apply(false); });
+  });
+  if (searchBtn) searchBtn.addEventListener('click', function(){ apply(true); });
+
+  /* pins → tooltip near the pin */
+  var tipT;
+  function showTip(g){
+    var dot = g.querySelector('circle:not(.halo)') || g.querySelector('circle');
+    var dr = dot.getBoundingClientRect(), pr = mapPanel.getBoundingClientRect();
+    tip.innerHTML = '<strong>' + g.dataset.title + '</strong>' + g.dataset.info;
+    tip.style.left = Math.min(dr.left - pr.left + 16, pr.width - 210) + 'px';
+    tip.style.top = Math.max(dr.top - pr.top - 62, 6) + 'px';
+    tip.classList.add('show');
+    clearTimeout(tipT);
+    tipT = setTimeout(function(){ tip.classList.remove('show'); }, 3600);
+  }
+  pins.forEach(function(g){
+    g.addEventListener('click', function(){ showTip(g); });
+    g.addEventListener('mouseenter', function(){ showTip(g); });
     g.addEventListener('mouseleave', function(){ tip.classList.remove('show'); });
-    if (f.cls !== 'ghost'){
-      g.style.cursor = 'pointer';
-      g.addEventListener('click', function(){
-        var card = document.querySelector('.book[data-id="' + f.id + '"]');
-        if (card){
-          card.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
-          card.classList.add('lit'); setTimeout(function(){ card.classList.remove('lit'); }, 2200);
-        }
+    g.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); showTip(g); }
+    });
+  });
+
+  /* cards ↔ pins courtesy: hovering a card lights its pin */
+  cards.forEach(function(c){
+    c.addEventListener('mouseenter', function(){
+      pins.forEach(function(g){ g.classList.toggle('lit', g.dataset.project === c.dataset.project); });
+    });
+    c.addEventListener('mouseleave', function(){
+      pins.forEach(function(g){ g.classList.remove('lit'); });
+    });
+    if (c.dataset.href){
+      c.addEventListener('click', function(){ window.location.href = c.dataset.href; });
+      c.addEventListener('keydown', function(e){
+        if (e.key === 'Enter'){ window.location.href = c.dataset.href; }
+      });
+    } else {
+      c.addEventListener('click', function(){
+        toast(NAMES[c.dataset.project] + ' is still being read — nothing is listed until its story checks out.');
       });
     }
   });
-  function showTip(f, dot){
-    var pt = svg.createSVGPoint(); pt.x = f.x; pt.y = f.y - 12;
-    var sp = pt.matrixTransform(dot.getScreenCTM());
-    var br = atlasBox.getBoundingClientRect();
-    tip.textContent = f.name;
-    tip.style.left = (sp.x - br.left) + 'px'; tip.style.top = (sp.y - br.top) + 'px';
-    tip.classList.add('show');
-  }
-  // card hover → marker halo
-  document.querySelectorAll('.book[data-id]').forEach(function(card){
-    card.addEventListener('mouseenter', function(){
-      var m = mk.querySelector('.marker[data-id="' + card.dataset.id + '"]'); if (m) m.classList.add('lit');
-    });
-    card.addEventListener('mouseleave', function(){
-      var m = mk.querySelector('.marker[data-id="' + card.dataset.id + '"]'); if (m) m.classList.remove('lit');
-    });
-  });
-
-  /* filters over the shelf of projects */
-  var state = { status: 'all', region: 'all', crop: 'all' };
-  document.querySelectorAll('.fbtns[data-filter]').forEach(function(group){
-    group.addEventListener('click', function(e){
-      var b = e.target.closest('.fbtn'); if (!b) return;
-      group.querySelectorAll('.fbtn').forEach(function(x){ x.classList.remove('on'); });
-      b.classList.add('on');
-      state[group.dataset.filter] = b.dataset.v;
-      applyFilters();
-    });
-  });
-  function applyFilters(){
-    var books = document.querySelectorAll('.book[data-id]');
-    var shown = 0;
-    books.forEach(function(bk){
-      var ok = (state.status === 'all' || bk.dataset.status === state.status)
-        && (state.region === 'all' || bk.dataset.region === state.region)
-        && (state.crop === 'all' || bk.dataset.crop === state.crop);
-      bk.classList.toggle('hiding', !ok);
-      if (ok) shown++;
-      var m = mk.querySelector('.marker[data-id="' + bk.dataset.id + '"]');
-      if (m) m.classList.toggle('dim', !ok);
-    });
-    var total = document.querySelectorAll('.book[data-id]').length;
-    note.textContent = shown === total ? 'Showing every story on the shelf.'
-      : shown === 0 ? 'No stories match — the shelf is quiet. Loosen a filter.'
-      : 'Showing ' + shown + (shown === 1 ? ' story' : ' stories') + ' on the shelf.';
-  }
 })();
 
 /* ════════════ JOURNAL TABS · COUNTERS · TYPEWRITER ════════════ */
@@ -678,21 +672,21 @@ document.querySelectorAll('form[data-notify]').forEach(function(f){
     caps.forEach(function(c, i){ c.classList.toggle('on', i === idx); });
   }
 
-  if (hasGsap && !reduced){
-    ScrollTrigger.create({
-      trigger: stage, start: 'top 70%', end: 'bottom bottom', scrub: .6,
-      onUpdate: function(self){
-        window.__orchardProgress = self.progress;
-        setCaption(self.progress);
-      }
-    });
-  } else {
-    window.addEventListener('scroll', function(){
-      var r = stage.getBoundingClientRect();
-      var p = Math.max(0, Math.min(1, -r.top / (r.height - window.innerHeight || 1)));
-      window.__orchardProgress = p; setCaption(p);
-    }, { passive: true });
+  // plain rAF-throttled scroll math — no ScrollTrigger needed here,
+  // the 3D loop already smooths the value on its own clock
+  var ticking = false;
+  function measure(){
+    ticking = false;
+    var r = stage.getBoundingClientRect();
+    var span = (r.height - window.innerHeight) || 1;
+    var p = Math.max(0, Math.min(1, -r.top / span));
+    window.__orchardProgress = p;
+    setCaption(p);
   }
+  window.addEventListener('scroll', function(){
+    if (!ticking){ ticking = true; requestAnimationFrame(measure); }
+  }, { passive: true });
+  measure();
 
   var loaded = false;
   var io = new IntersectionObserver(function(es){
