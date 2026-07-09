@@ -9,7 +9,7 @@
 function loadThree(cb){
   if (window.THREE) return cb();
   var s = document.createElement('script');
-  s.src = 'js/vendor/three.min.js';
+  s.src = '/js/vendor/three.min.js';
   s.onload = cb;
   s.onerror = function(){ /* the chapter stays a written one */ };
   document.head.appendChild(s);

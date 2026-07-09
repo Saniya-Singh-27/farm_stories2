@@ -1,6 +1,7 @@
 /* ════════════════════════════════════════════════════════════
    THE FARM STORIES · main.js
-   Intro book · hero morph · flipbook · plot explorer · journal
+   Shared across all pages — every block guards for its own
+   markup, so one file serves the whole site.
 ════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
@@ -12,21 +13,26 @@ var lenis = null;
 /* ───────── toast ───────── */
 var toastEl = document.getElementById('toast'), toastT;
 function toast(msg){
+  if (!toastEl) return;
   toastEl.textContent = msg; toastEl.classList.add('show');
   clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove('show'); }, 3200);
 }
 
 /* ───────── smooth scroll (Lenis + GSAP) ───────── */
+if (hasGsap){
+  gsap.registerPlugin(ScrollTrigger);
+  window.addEventListener('load', function(){ ScrollTrigger.refresh(); });
+}
 if (!reduced && typeof window.Lenis !== 'undefined'){
-  lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 0.9 });
+  lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.92, smoothWheel: true });
   if (hasGsap){
-    gsap.registerPlugin(ScrollTrigger);
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(function(time){ lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
   } else {
     (function raf(t){ lenis.raf(t); requestAnimationFrame(raf); })(0);
   }
+  // same-page anchors glide; cross-page links navigate normally
   document.querySelectorAll('a[href^="#"]').forEach(function(a){
     a.addEventListener('click', function(e){
       var id = a.getAttribute('href');
@@ -38,26 +44,22 @@ if (!reduced && typeof window.Lenis !== 'undefined'){
     });
   });
 }
-if (hasGsap){
-  gsap.registerPlugin(ScrollTrigger);
-  window.addEventListener('load', function(){ ScrollTrigger.refresh(); });
-}
 
-/* ════════════ INTRO · THE BOOK OPENS ════════════ */
+/* ════════════ INTRO · THE BOOK OPENS (home only) ════════════ */
 (function intro(){
   var intro = document.getElementById('intro');
+  if (!intro){ document.body.classList.remove('locked'); return; }
   var tome = document.getElementById('tome');
   var skip = document.getElementById('skipBtn');
   var hint = document.getElementById('openHint');
   function unlock(){ document.body.classList.remove('locked'); }
   function dismiss(fast){
-    if (!intro) return;
     unlock();
     if (fast){ intro.style.display = 'none'; return; }
     intro.classList.add('away');
     setTimeout(function(){ intro.style.display = 'none'; }, 1250);
   }
-  if (reduced || !intro){ unlock(); if (intro) intro.style.display = 'none'; return; }
+  if (reduced){ unlock(); intro.style.display = 'none'; return; }
   if (sessionStorage.getItem('tfs-book-opened')){ dismiss(true); return; }
 
   var dust = intro.querySelector('.dust');
@@ -69,15 +71,12 @@ if (hasGsap){
     m.style.width = m.style.height = (2.5 + Math.random() * 3) + 'px';
     dust.appendChild(m);
   }
-
-  // leaves to turn, outermost first: cover, then pages 1..3
   var leaves = [tome.querySelector('.tome-cover')]
     .concat([].slice.call(tome.querySelectorAll('.tome-page.leaf')).sort(function(a,b){
       return (+a.dataset.leaf) - (+b.dataset.leaf);
     }));
   var turned = 0, finished = false;
   var hints = ['', 'Turn the page', 'Once more…', 'One last page'];
-
   function turnNext(){
     if (finished) return;
     if (turned >= leaves.length){ finish(); return; }
@@ -86,7 +85,6 @@ if (hasGsap){
     turned++;
     hint.textContent = hints[turned] || '';
     if (turned >= leaves.length - 1){
-      // after the 3rd visible turn, drift into the site
       finished = true;
       hint.textContent = '';
       setTimeout(function(){
@@ -100,13 +98,11 @@ if (hasGsap){
   tome.addEventListener('keydown', function(e){
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight'){ e.preventDefault(); turnNext(); }
   });
-  // swipe
   var sx = null;
   tome.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; }, { passive: true });
   tome.addEventListener('touchend', function(e){
     if (sx === null) return;
-    var dx = e.changedTouches[0].clientX - sx;
-    if (dx < -34) turnNext();
+    if (e.changedTouches[0].clientX - sx < -34) turnNext();
     sx = null;
   }, { passive: true });
   skip.addEventListener('click', function(){
@@ -143,17 +139,8 @@ document.querySelectorAll('h2.split').forEach(function(h){
   els.forEach(function(e){ io.observe(e); });
 })();
 
-/* ════════════ NAV · PROGRESS · STREAM ════════════ */
+/* ════════════ PROGRESS · STREAM · STICKY CTA ════════════ */
 (function(){
-  var links = document.querySelectorAll('nav.chapters a');
-  ['beginning','stories','orchard','library','gatherings','journal'].forEach(function(id){
-    var s = document.getElementById(id); if (!s) return;
-    new IntersectionObserver(function(es){
-      es.forEach(function(en){
-        if (en.isIntersecting) links.forEach(function(l){ l.classList.toggle('active', l.dataset.chapter === id); });
-      });
-    }, { rootMargin: '-35% 0px -55% 0px' }).observe(s);
-  });
   var prog = document.getElementById('progress');
   var path = document.getElementById('streamPath'), len = 0;
   if (path){
@@ -165,22 +152,22 @@ document.querySelectorAll('h2.split').forEach(function(h){
     var d = document.documentElement;
     var top = d.scrollTop || document.body.scrollTop;
     var p = top / ((d.scrollHeight - d.clientHeight) || 1);
-    prog.style.width = (p * 100) + '%';
+    if (prog) prog.style.width = (p * 100) + '%';
     if (path && !reduced) path.style.strokeDashoffset = String(len * (1 - Math.min(1, p * 1.15)));
-    if (sticky) sticky.classList.toggle('show', top > window.innerHeight * .9 && p < .92);
+    if (sticky) sticky.classList.toggle('show', top > window.innerHeight * .7 && p < .92);
   }
   window.addEventListener('scroll', function(){ requestAnimationFrame(onScroll); }, { passive: true });
   onScroll();
 })();
 
-/* ════════════ HERO · INK BECOMES ORCHARD ════════════ */
+/* ════════════ HERO · INK BECOMES ORCHARD (home only) ════════════ */
 (function(){
   var hero = document.getElementById('hero');
+  if (!hero) return;
   var pin = document.getElementById('heroPin');
   var ink = document.getElementById('heroInk');
   var real = document.getElementById('heroReal');
   var video = document.getElementById('heroVideo');
-  if (!hero) return;
   var layers = [].slice.call(ink.querySelectorAll('.layer'));
 
   // mouse parallax on the ink world
@@ -211,26 +198,27 @@ document.querySelectorAll('h2.split').forEach(function(h){
   }
 
   if (hasGsap && !reduced){
+    // a long pin and a heavy scrub make the dissolve feel like slow breathing
     var tl = gsap.timeline({
+      defaults: { ease: 'power1.inOut' },
       scrollTrigger: {
-        trigger: hero, start: 'top top', end: '+=180%',
-        scrub: 0.6, pin: pin,
+        trigger: hero, start: 'top top', end: '+=240%',
+        scrub: 1.2, pin: pin,
         onUpdate: function(self){
-          hero.classList.toggle('lit', self.progress > .45);
-          if (self.progress > .2) startVideo();
+          hero.classList.toggle('lit', self.progress > .42);
+          if (self.progress > .04) startVideo();
         }
       }
     });
-    // reality breathes in beneath the ink
-    tl.fromTo(real, { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, ease: 'none', duration: 1 }, 0);
-    // the sketch dissolves, nearest strokes first — tree by tree, mountain by mountain
+    // reality breathes in beneath the ink — long, gentle, overlapping
+    tl.fromTo(real, { opacity: 0, scale: 1.07 }, { opacity: 1, scale: 1, duration: 1.05 }, 0);
+    // the sketch dissolves nearest strokes first — tree by tree, mountain by mountain
     layers.slice().sort(function(a, b){ return (+a.dataset.morph) - (+b.dataset.morph); })
       .forEach(function(l, i){
-        tl.to(l, { opacity: 0, y: -30 - i * 14, filter: 'blur(2.5px)', ease: 'none', duration: .42 }, .12 + i * .17);
+        tl.to(l, { opacity: 0, y: -26 - i * 12, filter: 'blur(3px)', duration: .52 }, .10 + i * .16);
       });
-    tl.to('.scroll-cue', { opacity: 0, duration: .2 }, .25);
+    tl.to('.scroll-cue', { opacity: 0, duration: .2 }, .22);
   } else {
-    // graceful: static ink hero; play video softly behind after load
     hero.classList.remove('lit');
     if (!reduced) setTimeout(startVideo, 2500);
     if (reduced && video) video.remove();
@@ -251,25 +239,24 @@ if (!reduced && !isTouch){
 
 /* ════════════════════════════════════════════════
    THE BOOK READER · Story One as a flipbook
+   (lives on the Our Projects page)
 ════════════════════════════════════════════════ */
-var PLOTS; // declared below, used by reserve page
-function plotsLeft(){
-  var n = 0; PLOTS.forEach(function(p){ if (p.status === 'available') n++; });
-  return n;
-}
-
-var readerCtl = (function(){
+(function(){
   var reader = document.getElementById('reader');
+  var openBtn = document.getElementById('openStoryOne');
+  // on pages without the reader, the Story One book leads to /projects
+  if (!reader){
+    if (openBtn) openBtn.addEventListener('click', function(){ window.location.href = '/projects'; });
+    return;
+  }
   var fb = document.getElementById('flipbook');
   var prevB = document.getElementById('pgPrev'), nextB = document.getElementById('pgNext');
   var count = document.getElementById('pgCount');
-  var openBtn = document.getElementById('openStoryOne');
   var pages = null, spread = 0, turning = false, lastFocus = null;
 
   var IMG = {
     orchard: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=700&q=80',
     hills: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=700&q=80',
-    forest: 'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=700&q=80',
     valley: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1000&q=80'
   };
 
@@ -312,9 +299,9 @@ var readerCtl = (function(){
       '<p class="fbp-kicker">Page three · Plates</p>' +
       '<h3 class="fbp-title">The orchard, <em>as found</em></h3>' +
       '<div class="fbp-gallery">' +
-        '<figure><img loading="lazy" src="' + IMG.orchard + '" alt="Mature mango orchard rows"><figcaption>the west rows, in fruit</figcaption></figure>' +
-        '<figure><img loading="lazy" src="' + IMG.hills + '" alt="Nilgiris hills at dawn"><figcaption>the Nilgiris, from plot 4</figcaption></figure>' +
-        '<figure class="wide"><img loading="lazy" src="' + IMG.valley + '" alt="Valley panorama in morning light"><figcaption>morning, over the valley</figcaption></figure>' +
+        '<figure><img loading="lazy" decoding="async" src="' + IMG.orchard + '" alt="Mature mango orchard rows"><figcaption>the west rows, in fruit</figcaption></figure>' +
+        '<figure><img loading="lazy" decoding="async" src="' + IMG.hills + '" alt="Nilgiris hills at dawn"><figcaption>the Nilgiris, from plot 4</figcaption></figure>' +
+        '<figure class="wide"><img loading="lazy" decoding="async" src="' + IMG.valley + '" alt="Valley panorama in morning light"><figcaption>morning, over the valley</figcaption></figure>' +
       '</div>' +
       '<p class="fbp-fold">Photographs from the estate record — never renders.</p>' +
       '<span class="fbp-no">3</span>',
@@ -332,7 +319,7 @@ var readerCtl = (function(){
         '<text x="42" y="120" class="plan-label small">stream</text>' +
         '<text x="178" y="172" class="plan-label small">entrance</text></svg></div>' +
       '<div class="fbp-body"><p>Twenty-six plots of 20–30 cents, folded between the orchard blocks along a 22-foot loop road. Every plot keeps its trees.</p></div>' +
-      '<div class="fbp-cta"><button class="btn btn-ink" data-goto="#library">Open the full map</button></div>' +
+      '<div class="fbp-cta"><a class="btn btn-ink" href="/portal">See every project in the Portal</a></div>' +
       '<span class="fbp-no">4</span>',
       // 5 · ownership
       '<p class="fbp-kicker">Page five · The record of ownership</p>' +
@@ -361,17 +348,13 @@ var readerCtl = (function(){
       // 7 · reserve
       '<p class="fbp-kicker">Page seven · Reserve</p>' +
       '<h3 class="fbp-title">Join the <em>story</em></h3>' +
-      '<div class="fbp-body"><p>Of the twenty-six places in this book, <strong>' + plotsLeftText() + '</strong> remain unwritten. We admit families slowly, and always after a morning at the farm.</p>' +
+      '<div class="fbp-body"><p>Of the twenty-six places in this book, <strong>fifteen</strong> remain unwritten. We admit families slowly, and always after a morning at the farm.</p>' +
       '<p>Come out with us. Walk the rows, read the papers, meet a family or two. If the land speaks to you, you’ll know.</p></div>' +
-      '<div class="fbp-cta"><button class="btn btn-ink" data-goto="#chapter">Plan a visit</button>' +
+      '<div class="fbp-cta"><a class="btn btn-ink" href="/#chapter">Plan a visit</a>' +
       '<a class="btn btn-ghost" style="border-color:var(--ink);color:var(--ink);background:transparent" href="https://wa.me/919003746953" target="_blank" rel="noopener">WhatsApp us</a></div>' +
       '<p class="fbp-fold">We would rather lose a sale than lose your trust.</p>' +
       '<span class="fbp-no">7</span>'
     ];
-  }
-  function plotsLeftText(){
-    var n = plotsLeft();
-    return n + (n === 1 ? ' plot' : ' plots');
   }
 
   var mobile = function(){ return window.innerWidth < 760; };
@@ -394,16 +377,6 @@ var readerCtl = (function(){
       : 'spread ' + (spread + 1) + ' of ' + total;
     prevB.disabled = spread === 0;
     nextB.disabled = spread >= total - 1;
-    fb.querySelectorAll('[data-goto]').forEach(function(b){
-      b.addEventListener('click', function(){
-        close();
-        var t = document.querySelector(b.dataset.goto);
-        if (t){
-          if (lenis) lenis.scrollTo(t, { offset: -70 });
-          else t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
-        }
-      });
-    });
   }
 
   function turn(dir){
@@ -413,7 +386,6 @@ var readerCtl = (function(){
     if (target < 0 || target > total - 1) return;
     if (reduced || mobile()){ spread = target; render(); return; }
     turning = true;
-    // the leaf that lifts: front = current right page, back = next left page
     var leaf = document.createElement('div'); leaf.className = 'fb-leaf';
     if (dir > 0){
       leaf.innerHTML = '<div class="lf front">' + (pages[spread * 2 + 1] || '') + '</div>' +
@@ -466,14 +438,12 @@ var readerCtl = (function(){
     if (e.key === 'ArrowRight') turn(1);
     if (e.key === 'ArrowLeft') turn(-1);
   });
-  // click page edges to turn
   fb.addEventListener('click', function(e){
-    if (e.target.closest('[data-goto], a, button')) return;
+    if (e.target.closest('a, button')) return;
     var r = fb.getBoundingClientRect();
     var x = (e.clientX - r.left) / r.width;
     if (x > .62) turn(1); else if (x < .38) turn(-1);
   });
-  // swipe
   var tx = null;
   fb.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, { passive: true });
   fb.addEventListener('touchend', function(e){
@@ -483,10 +453,9 @@ var readerCtl = (function(){
     tx = null;
   }, { passive: true });
   window.addEventListener('resize', function(){ if (!reader.hidden){ spread = 0; render(); } });
-  return { open: open, close: close };
 })();
 
-// the two "coming soon" books whisper instead of opening
+// "coming soon" books whisper instead of opening
 document.querySelectorAll('.shelf-book.story-soon').forEach(function(b){
   function whisper(){
     toast(b.querySelector('.sb-kicker').textContent === 'Your Chapter'
@@ -498,397 +467,108 @@ document.querySelectorAll('.shelf-book.story-soon').forEach(function(b){
 });
 
 /* ════════════════════════════════════════════════
-   PLOT EXPLORER · the endpaper map, alive
+   THE PORTAL · atlas of projects (portal page)
+   One marker per project — the aggregator works at
+   the level of estates, not individual plots.
 ════════════════════════════════════════════════ */
-PLOTS = (function(){
-  // 26 plots ringed around the orchard heart. cents 20–30.
-  var spec = [
-    // [cents, status, traits...]
-    [24,'sold','grove'],      [22,'available','grove'], [27,'reserved','grove','stream'],
-    [30,'available','corner','stream'], [25,'available','stream'], [21,'sold','stream'],
-    [23,'available','stream'],[28,'reserved','corner'], [20,'available'],
-    [26,'available'],         [22,'reserved'],          [29,'available','corner','view'],
-    [24,'sold','view'],       [21,'available','view'],  [27,'available','view'],
-    [30,'reserved','corner','view'], [25,'available','view'], [23,'sold','view'],
-    [20,'available'],         [26,'reserved'],          [28,'available','corner'],
-    [22,'available'],         [24,'sold'],              [29,'available','grove'],
-    [21,'reserved','grove'],  [25,'available','grove']
-  ];
-  var cx = 500, cy = 352, rx = 356, ry = 252;
-  var startA = 122, endA = 418; // leave a gap at the bottom for the entrance
-  var out = [];
-  for (var i = 0; i < 26; i++){
-    var a = (startA + (endA - startA) * (i / 25)) * Math.PI / 180;
-    var jitter = ((i * 37) % 11 - 5) * 1.6;
-    var px = cx + Math.cos(a) * (rx + jitter);
-    var py = cy + Math.sin(a) * (ry + jitter * .7);
-    var s = spec[i];
-    var cents = s[0];
-    var w = 62 + (cents - 20) * 2.6, h = 50 + (cents - 20) * 1.6;
-    out.push({
-      no: i + 1, cents: cents, status: s[1], traits: s.slice(2),
-      x: px, y: py, w: w, h: h, rot: (a * 180 / Math.PI) + 90 + ((i * 13) % 7 - 3),
-      trees: 8 + ((i * 7) % 9),
-      frontage: 40 + ((i * 11) % 26),
-      facing: ['east','south-east','south','south-west','west','north-west','north','north-east'][Math.round((((a*180/Math.PI)%360)+360)%360 / 45) % 8]
-    });
-  }
-  return out;
-})();
-
-(function explorer(){
-  var svg = document.getElementById('planSvg');
+(function atlas(){
+  var svg = document.getElementById('indiaMap');
   if (!svg) return;
   var NS = 'http://www.w3.org/2000/svg';
-  var tip = document.getElementById('planTip');
-  var wrap = document.getElementById('planWrap');
-  var note = document.getElementById('planNote');
-  var ppEmpty = document.getElementById('ppEmpty');
-  var ppDetail = document.getElementById('ppDetail');
-  var ppCompare = document.getElementById('ppCompare');
-  var scarcity = document.getElementById('scarcityNote');
-  var bookmarks = [];
-  try { bookmarks = JSON.parse(localStorage.getItem('tfs-bookmarks') || '[]'); } catch(e){}
-  var compare = [];
-  var selected = null;
+  var mk = document.getElementById('markers');
+  var tip = document.getElementById('mapTip');
+  var atlasBox = document.getElementById('atlasBox');
+  var note = document.getElementById('resultsNote');
 
-  scarcity.textContent = plotsLeft() + ' of 26 plots remain · admitted slowly';
-
-  function el(tag, attrs, parent){
-    var e = document.createElementNS(NS, tag);
-    for (var k in attrs) e.setAttribute(k, attrs[k]);
-    if (parent) parent.appendChild(e);
-    return e;
-  }
-
-  /* ── scenery: boundary, stream, lake, roads, pavilion, grove ── */
-  var scenery = el('g', { id: 'scenery' }, svg);
-  el('path', { d: 'M96,72 Q500,18 906,66 Q972,360 908,646 Q500,706 94,650 Q28,352 96,72 Z',
-    'class': 'plan-ink', 'stroke-width': 3, fill: '#F6F0DE' }, scenery);
-  // stream down the west
-  el('path', { d: 'M150,60 Q118,180 168,290 Q214,392 158,500 Q128,570 170,648',
-    'class': 'plan-ink', 'stroke-width': 5, stroke: '#5C6B70', opacity: .55 }, scenery);
-  el('path', { d: 'M150,60 Q118,180 168,290 Q214,392 158,500 Q128,570 170,648',
-    'class': 'plan-ink', 'stroke-width': 1.4, stroke: '#5C6B70', 'stroke-dasharray': '7 9', opacity: .8 }, scenery);
-  // lake, top right
-  el('ellipse', { cx: 812, cy: 150, rx: 62, ry: 40, 'class': 'plan-ink', 'stroke-width': 2.2,
-    fill: '#DEE6E4' }, scenery);
-  el('path', { d: 'M776,146 q10,-8 20,0 q10,-8 20,0 M790,162 q9,-7 18,0', 'class': 'plan-ink',
-    'stroke-width': 1.4, stroke: '#5C6B70', opacity: .7 }, scenery);
-  // loop road + entrance drive
-  el('ellipse', { cx: 500, cy: 352, rx: 268, ry: 182, 'class': 'plan-ink', 'stroke-width': 8,
-    stroke: '#C9BC9E', opacity: .85 }, scenery);
-  el('ellipse', { cx: 500, cy: 352, rx: 268, ry: 182, 'class': 'plan-ink', 'stroke-width': 1.5,
-    'stroke-dasharray': '10 12', opacity: .55 }, scenery);
-  el('path', { d: 'M500,534 L500,676', 'class': 'plan-ink', 'stroke-width': 8, stroke: '#C9BC9E', opacity: .85 }, scenery);
-  el('path', { d: 'M500,534 L500,676', 'class': 'plan-ink', 'stroke-width': 1.5, 'stroke-dasharray': '10 12', opacity: .55 }, scenery);
-  // entrance arch
-  el('path', { d: 'M478,678 q22,-26 44,0', 'class': 'plan-ink', 'stroke-width': 2.6 }, scenery);
-  // pavilion at the heart
-  var pav = el('g', {}, scenery);
-  el('circle', { cx: 500, cy: 352, r: 34, 'class': 'plan-ink', 'stroke-width': 2.2, fill: '#F2E9D2' }, pav);
-  el('path', { d: 'M478,362 l22,-26 l22,26 M486,362 l0,-12 M514,362 l0,-12', 'class': 'plan-ink', 'stroke-width': 2 }, pav);
-  // orchard heart: rows of little trees
-  var grove = el('g', { opacity: .8 }, scenery);
-  for (var r = 0; r < 3; r++){
-    for (var c = 0; c < 7; c++){
-      var gx = 360 + c * 46 + (r % 2) * 20, gy = 268 + r * 62;
-      if (Math.hypot(gx - 500, gy - 352) < 52) continue;
-      el('circle', { cx: gx, cy: gy, r: 11, 'class': 'plan-ink', 'stroke-width': 1.6, fill: '#EDE9D2' }, grove);
-      el('circle', { cx: gx + 4, cy: gy - 3, r: 1.8, fill: '#E8B23A' }, grove);
+  var PROJECTS = [
+    { id: 'mm',    name: 'Mango Meadows · Agali',      x: 214, y: 540, cls: 'verified' },
+    { id: 'coorg', name: 'Coffee Canopy · Coorg',      x: 186, y: 498, cls: 'pending' },
+    { id: 'sak',   name: 'Areca Vale · Sakleshpur',    x: 182, y: 476, cls: 'pending' },
+    { id: 'way',   name: 'Pepper Hollow · Wayanad',    x: 200, y: 518, cls: 'ghost' },
+    { id: 'hos',   name: 'Lantern Lake · Hosur',       x: 238, y: 498, cls: 'ghost' }
+  ];
+  PROJECTS.forEach(function(f){
+    var g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'marker ' + f.cls);
+    g.dataset.id = f.id;
+    var halo = document.createElementNS(NS, 'circle');
+    halo.setAttribute('class', 'halo'); halo.setAttribute('cx', f.x); halo.setAttribute('cy', f.y); halo.setAttribute('r', 9);
+    var dot = document.createElementNS(NS, 'circle');
+    dot.setAttribute('class', 'dot'); dot.setAttribute('cx', f.x); dot.setAttribute('cy', f.y);
+    dot.setAttribute('r', f.cls === 'ghost' ? 5 : 8);
+    g.appendChild(halo); g.appendChild(dot);
+    if (f.cls !== 'ghost'){
+      var t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', f.x + 14); t.setAttribute('y', f.y + 4);
+      t.textContent = f.name.split('·')[1].trim();
+      g.appendChild(t);
     }
-  }
-  // old grove, top-left
-  for (var g2 = 0; g2 < 5; g2++){
-    el('circle', { cx: 210 + (g2 % 3) * 40, cy: 130 + Math.floor(g2 / 3) * 44, r: 13,
-      'class': 'plan-ink', 'stroke-width': 1.6, fill: '#EDE9D2' }, scenery);
-  }
-  // labels
-  function label(x, y, t, small){
-    var e = el('text', { x: x, y: y, 'class': 'plan-label' + (small ? ' small' : '') }, scenery);
-    e.textContent = t;
-  }
-  label(468, 410, 'the pavilion', true);
-  label(772, 212, 'the lake', true);
-  label(186, 330, 'the stream', true);
-  label(182, 108, 'old grove', true);
-  label(516, 664, 'entrance', true);
-  el('text', { x: 924, y: 66, 'class': 'plan-label small' }, scenery).textContent = 'N ↑';
-  // sun path (hidden until toggled)
-  var sun = el('g', { id: 'sunArc', opacity: 0 }, svg);
-  el('path', { d: 'M120,420 Q500,60 880,420', 'class': 'plan-ink', 'stroke-width': 1.6,
-    stroke: '#E8B23A', 'stroke-dasharray': '4 8' }, sun);
-  [['E · sunrise', 128, 444], ['noon', 486, 118], ['W · sunset', 812, 444]].forEach(function(s){
-    el('circle', { cx: s[1] + 10, cy: s[2] - 18, r: 8, fill: '#E8B23A', opacity: .85 }, sun);
-    el('text', { x: s[1] - 12, y: s[2] + 4, 'class': 'plan-label small', fill: '#9A6A10' }, sun).textContent = s[0];
-  });
-
-  /* ── the plots ── */
-  var plotsG = el('g', { id: 'plots' }, svg);
-  PLOTS.forEach(function(p){
-    var g = el('g', { 'class': 'plot ' + p.status, transform: 'rotate(' + p.rot.toFixed(1) + ' ' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + ')',
-      tabindex: 0, role: 'button', 'aria-label': 'Plot ' + p.no + ', ' + p.cents + ' cents, ' + p.status }, plotsG);
-    g.dataset.no = p.no;
-    el('rect', { 'class': 'shape', x: p.x - p.w / 2, y: p.y - p.h / 2, width: p.w, height: p.h, rx: 4 }, g);
-    var t = el('text', { x: p.x, y: p.y + 4, 'text-anchor': 'middle' }, g);
-    t.textContent = p.no;
-    // a little tree per plot
-    el('circle', { cx: p.x + p.w / 2 - 13, cy: p.y - p.h / 2 + 13, r: 6.5, 'class': 'plan-ink', 'stroke-width': 1.3, fill: 'none', opacity: .6 }, g);
-    if (bookmarks.indexOf(p.no) > -1) g.classList.add('bookmarked');
-    p._g = g;
-
-    g.addEventListener('mouseenter', function(e){ showTip(p); });
-    g.addEventListener('mousemove', function(e){ moveTip(e); });
+    mk.appendChild(g);
+    g.addEventListener('mouseenter', function(){ showTip(f, dot); });
     g.addEventListener('mouseleave', function(){ tip.classList.remove('show'); });
-    g.addEventListener('click', function(){ select(p); });
-    g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); select(p); } });
+    if (f.cls !== 'ghost'){
+      g.style.cursor = 'pointer';
+      g.addEventListener('click', function(){
+        var card = document.querySelector('.book[data-id="' + f.id + '"]');
+        if (card){
+          card.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+          card.classList.add('lit'); setTimeout(function(){ card.classList.remove('lit'); }, 2200);
+        }
+      });
+    }
   });
-
-  var TRAIT_NAMES = { corner: 'corner plot', stream: 'by the stream', view: 'valley view', grove: 'old grove' };
-  var STATUS_NAMES = { available: 'Available', reserved: 'Reserved', sold: 'Taken' };
-
-  function traitLine(p){
-    return p.traits.length ? p.traits.map(function(t){ return TRAIT_NAMES[t]; }).join(' · ') : 'quiet middle rows';
-  }
-  function showTip(p){
-    tip.innerHTML = '<strong>Plot ' + p.no + ' · ' + p.cents + ' cents</strong>' +
-      STATUS_NAMES[p.status] + ' · ' + traitLine(p) + '<br>' + p.trees + ' mango trees · faces ' + p.facing;
+  function showTip(f, dot){
+    var pt = svg.createSVGPoint(); pt.x = f.x; pt.y = f.y - 12;
+    var sp = pt.matrixTransform(dot.getScreenCTM());
+    var br = atlasBox.getBoundingClientRect();
+    tip.textContent = f.name;
+    tip.style.left = (sp.x - br.left) + 'px'; tip.style.top = (sp.y - br.top) + 'px';
     tip.classList.add('show');
   }
-  function moveTip(e){
-    var r = wrap.getBoundingClientRect();
-    var x = e.clientX - r.left, y = e.clientY - r.top;
-    tip.style.left = Math.min(x + 16, r.width - 250) + 'px';
-    tip.style.top = Math.max(y - 66, 8) + 'px';
-  }
+  // card hover → marker halo
+  document.querySelectorAll('.book[data-id]').forEach(function(card){
+    card.addEventListener('mouseenter', function(){
+      var m = mk.querySelector('.marker[data-id="' + card.dataset.id + '"]'); if (m) m.classList.add('lit');
+    });
+    card.addEventListener('mouseleave', function(){
+      var m = mk.querySelector('.marker[data-id="' + card.dataset.id + '"]'); if (m) m.classList.remove('lit');
+    });
+  });
 
-  /* ── detail panel ── */
-  function distTo(p, x, y){ return Math.round(Math.hypot(p.x - x, p.y - y) / 10) * 5; } // playful metres
-  function select(p){
-    selected = p;
-    PLOTS.forEach(function(q){ q._g.classList.toggle('sel', q === p); });
-    ppEmpty.hidden = true; ppCompare.hidden = true; ppDetail.hidden = false;
-    var bm = bookmarks.indexOf(p.no) > -1;
-    var inCmp = compare.indexOf(p.no) > -1;
-    ppDetail.innerHTML =
-      '<button class="pp-back" data-act="back">‹ back to the map</button>' +
-      '<span class="pp-badge ' + p.status + '">' + STATUS_NAMES[p.status] + '</span>' +
-      '<h3>Plot ' + p.no + '</h3>' +
-      '<p class="place">' + p.cents + ' cents · ' + traitLine(p) + '</p>' +
-      '<ul class="fact-list">' +
-        '<li><span class="k">Mango trees</span><span class="v">' + p.trees + ', mature</span></li>' +
-        '<li><span class="k">Road frontage</span><span class="v">~' + p.frontage + ' ft on the loop</span></li>' +
-        '<li><span class="k">Faces</span><span class="v">' + p.facing + ' — ' + (['east','south-east','north-east'].indexOf(p.facing) > -1 ? 'morning light' : 'evening light') + '</span></li>' +
-        '<li><span class="k">To the pavilion</span><span class="v">~' + distTo(p, 500, 352) + ' m</span></li>' +
-        '<li><span class="k">To the stream</span><span class="v">~' + distTo(p, 168, 350) + ' m</span></li>' +
-        '<li><span class="k">Papers</span><span class="v">patta · EC · layout, on file</span></li>' +
-        '<li><span class="k">Price</span><span class="v">shared at the table</span></li>' +
-      '</ul>' +
-      '<div class="pp-actions">' +
-        (p.status === 'available'
-          ? '<a class="btn btn-ink" href="#chapter" data-act="visit">Visit this plot</a>' : '') +
-        '<button class="btn btn-ghost" data-act="bm">' + (bm ? '★ Bookmarked' : '☆ Bookmark') + '</button>' +
-        '<button class="btn btn-ghost" data-act="cmp">' + (inCmp ? 'In comparison ✓' : '⇄ Compare') + '</button>' +
-      '</div>' +
-      (p.status !== 'available' ? '<p class="pp-note">This page is already written — but ' + plotsLeft() + ' others are still open.</p>' : '') +
-      renderTray();
-    bindPanel(p);
-  }
-  function renderTray(){
-    if (!compare.length) return '';
-    var chips = compare.map(function(no){
-      return '<span class="chip">Plot ' + no + '<button data-uncmp="' + no + '" aria-label="Remove plot ' + no + '">✕</button></span>';
-    }).join('');
-    return '<div class="compare-tray"><span style="font-weight:700">Comparing:</span>' + chips +
-      (compare.length > 1 ? '<button class="btn btn-ink" style="padding:9px 14px;font-size:12px" data-act="showcmp">Read side by side</button>' : '<span style="color:var(--ink-faint)">pick one more…</span>') +
-      '</div>';
-  }
-  function bindPanel(p){
-    var panel = document.getElementById('plotPanel');
-    panel.querySelectorAll('[data-act]').forEach(function(b){
-      b.addEventListener('click', function(e){
-        var act = b.dataset.act;
-        if (act === 'back'){ clearSel(); }
-        if (act === 'bm'){
-          var i = bookmarks.indexOf(p.no);
-          if (i > -1){ bookmarks.splice(i, 1); p._g.classList.remove('bookmarked'); }
-          else { bookmarks.push(p.no); p._g.classList.add('bookmarked'); toast('Plot ' + p.no + ' pressed between the pages — bookmarked.'); }
-          try { localStorage.setItem('tfs-bookmarks', JSON.stringify(bookmarks)); } catch(err){}
-          select(p);
-        }
-        if (act === 'cmp'){
-          var j = compare.indexOf(p.no);
-          if (j > -1) compare.splice(j, 1);
-          else {
-            if (compare.length >= 3){ toast('Three pages at a time — remove one first.'); return; }
-            compare.push(p.no);
-          }
-          select(p);
-        }
-        if (act === 'showcmp'){ showCompare(); }
-        if (act === 'visit'){
-          try { sessionStorage.setItem('tfs-plot-interest', String(p.no)); } catch(err){}
-        }
-      });
-    });
-    panel.querySelectorAll('[data-uncmp]').forEach(function(b){
-      b.addEventListener('click', function(){
-        compare.splice(compare.indexOf(+b.dataset.uncmp), 1);
-        if (selected) select(selected);
-      });
-    });
-  }
-  function clearSel(){
-    selected = null;
-    PLOTS.forEach(function(q){ q._g.classList.remove('sel'); });
-    ppDetail.hidden = true; ppCompare.hidden = true; ppEmpty.hidden = false;
-  }
-  function showCompare(){
-    var ps = compare.map(function(no){ return PLOTS[no - 1]; });
-    ppDetail.hidden = true; ppEmpty.hidden = true; ppCompare.hidden = false;
-    var rows = [
-      ['Size', function(p){ return p.cents + ' cents'; }],
-      ['Status', function(p){ return STATUS_NAMES[p.status]; }],
-      ['Trees', function(p){ return p.trees; }],
-      ['Frontage', function(p){ return '~' + p.frontage + ' ft'; }],
-      ['Faces', function(p){ return p.facing; }],
-      ['To pavilion', function(p){ return '~' + distTo(p, 500, 352) + ' m'; }],
-      ['To stream', function(p){ return '~' + distTo(p, 168, 350) + ' m'; }],
-      ['Character', function(p){ return traitLine(p); }]
-    ];
-    ppCompare.innerHTML = '<button class="pp-back" data-cmpback>‹ back</button>' +
-      '<p class="bookplate">Side by side</p>' +
-      '<table class="compare-table"><thead><tr><th></th>' +
-      ps.map(function(p){ return '<th>Plot ' + p.no + '</th>'; }).join('') + '</tr></thead><tbody>' +
-      rows.map(function(r){
-        return '<tr><td>' + r[0] + '</td>' + ps.map(function(p){ return '<td>' + r[1](p) + '</td>'; }).join('') + '</tr>';
-      }).join('') + '</tbody></table>' +
-      '<p class="pp-note">Still torn? Stand in both. The land decides these things better than tables do.</p>';
-    ppCompare.querySelector('[data-cmpback]').addEventListener('click', function(){
-      if (selected) select(selected); else clearSel();
-    });
-  }
-
-  /* ── filters ── */
-  var fstate = { status: 'all', size: 'all', trait: 'all' };
-  document.querySelectorAll('[data-pfilter]').forEach(function(group){
+  /* filters over the shelf of projects */
+  var state = { status: 'all', region: 'all', crop: 'all' };
+  document.querySelectorAll('.fbtns[data-filter]').forEach(function(group){
     group.addEventListener('click', function(e){
       var b = e.target.closest('.fbtn'); if (!b) return;
       group.querySelectorAll('.fbtn').forEach(function(x){ x.classList.remove('on'); });
       b.classList.add('on');
-      fstate[group.dataset.pfilter] = b.dataset.v;
-      applyF();
+      state[group.dataset.filter] = b.dataset.v;
+      applyFilters();
     });
   });
-  function sizeBand(c){ return c <= 23 ? 's' : c <= 27 ? 'm' : 'l'; }
-  function applyF(){
+  function applyFilters(){
+    var books = document.querySelectorAll('.book[data-id]');
     var shown = 0;
-    PLOTS.forEach(function(p){
-      var ok = (fstate.status === 'all' || p.status === fstate.status)
-        && (fstate.size === 'all' || sizeBand(p.cents) === fstate.size)
-        && (fstate.trait === 'all' || p.traits.indexOf(fstate.trait) > -1);
-      p._g.classList.toggle('dim', !ok);
+    books.forEach(function(bk){
+      var ok = (state.status === 'all' || bk.dataset.status === state.status)
+        && (state.region === 'all' || bk.dataset.region === state.region)
+        && (state.crop === 'all' || bk.dataset.crop === state.crop);
+      bk.classList.toggle('hiding', !ok);
       if (ok) shown++;
+      var m = mk.querySelector('.marker[data-id="' + bk.dataset.id + '"]');
+      if (m) m.classList.toggle('dim', !ok);
     });
-    note.textContent = shown === 26 ? 'All 26 plots on the map.'
-      : shown === 0 ? 'No plot matches — loosen a filter and wander again.'
-      : shown + (shown === 1 ? ' plot speaks' : ' plots speak') + ' to your filters.';
+    var total = document.querySelectorAll('.book[data-id]').length;
+    note.textContent = shown === total ? 'Showing every story on the shelf.'
+      : shown === 0 ? 'No stories match — the shelf is quiet. Loosen a filter.'
+      : 'Showing ' + shown + (shown === 1 ? ' story' : ' stories') + ' on the shelf.';
   }
-
-  /* ── toggles ── */
-  document.getElementById('sunToggle').addEventListener('click', function(){
-    var on = this.getAttribute('aria-pressed') === 'true';
-    this.setAttribute('aria-pressed', String(!on));
-    this.classList.toggle('on', !on);
-    sun.setAttribute('opacity', on ? 0 : 1);
-  });
-  document.getElementById('viewToggle').addEventListener('click', function(){
-    var on = this.getAttribute('aria-pressed') === 'true';
-    this.setAttribute('aria-pressed', String(!on));
-    this.classList.toggle('on', !on);
-    svg.classList.toggle('terrain', !on);
-    this.textContent = !on ? '✒ Ink' : '🛰 Terrain';
-  });
-
-  /* ── zoom & pan ── */
-  var vb = { x: 0, y: 0, w: 1000, h: 720 };
-  function setVB(){ svg.setAttribute('viewBox', vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h); }
-  function zoom(factor, cx, cy){
-    var nw = Math.min(1000, Math.max(220, vb.w * factor));
-    var nh = nw * .72;
-    cx = cx === undefined ? vb.x + vb.w / 2 : cx;
-    cy = cy === undefined ? vb.y + vb.h / 2 : cy;
-    var kx = (cx - vb.x) / vb.w, ky = (cy - vb.y) / vb.h;
-    vb.x = cx - nw * kx; vb.y = cy - nh * ky; vb.w = nw; vb.h = nh;
-    clampVB(); setVB();
-  }
-  function clampVB(){
-    vb.x = Math.max(-60, Math.min(1060 - vb.w, vb.x));
-    vb.y = Math.max(-50, Math.min(770 - vb.h, vb.y));
-  }
-  document.getElementById('zoomIn').addEventListener('click', function(){ zoom(.72); });
-  document.getElementById('zoomOut').addEventListener('click', function(){ zoom(1.38); });
-  document.getElementById('zoomReset').addEventListener('click', function(){ vb = { x: 0, y: 0, w: 1000, h: 720 }; setVB(); });
-  svg.addEventListener('wheel', function(e){
-    e.preventDefault();
-    var pt = clientToSvg(e.clientX, e.clientY);
-    zoom(e.deltaY > 0 ? 1.12 : .9, pt.x, pt.y);
-  }, { passive: false });
-  function clientToSvg(cx, cy){
-    var r = svg.getBoundingClientRect();
-    return { x: vb.x + (cx - r.left) / r.width * vb.w, y: vb.y + (cy - r.top) / r.height * vb.h };
-  }
-  // drag / pinch with pointer events.
-  // NOTE: no pointer capture — capturing on the svg retargets the click
-  // and plots would never receive their selection tap.
-  var pointers = {}, panStart = null, pinchStart = null, dragDist = 0;
-  svg.addEventListener('pointerdown', function(e){
-    pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-    var ids = Object.keys(pointers);
-    dragDist = 0;
-    if (ids.length === 1){ panStart = { x: e.clientX, y: e.clientY, vx: vb.x, vy: vb.y }; svg.classList.add('grabbing'); }
-    if (ids.length === 2){
-      var a = pointers[ids[0]], b = pointers[ids[1]];
-      pinchStart = { d: Math.hypot(a.x - b.x, a.y - b.y), w: vb.w };
-      panStart = null;
-    }
-  });
-  // a genuine drag must not end in an accidental plot selection
-  svg.addEventListener('click', function(e){
-    if (dragDist > 7){ e.stopPropagation(); }
-  }, true);
-  svg.addEventListener('pointermove', function(e){
-    if (!pointers[e.pointerId]) return;
-    pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
-    var ids = Object.keys(pointers);
-    if (ids.length === 1 && panStart){
-      dragDist = Math.max(dragDist, Math.hypot(e.clientX - panStart.x, e.clientY - panStart.y));
-      var r = svg.getBoundingClientRect();
-      vb.x = panStart.vx - (e.clientX - panStart.x) / r.width * vb.w;
-      vb.y = panStart.vy - (e.clientY - panStart.y) / r.height * vb.h;
-      clampVB(); setVB();
-    } else if (ids.length === 2 && pinchStart){
-      var a = pointers[ids[0]], b = pointers[ids[1]];
-      var d = Math.hypot(a.x - b.x, a.y - b.y);
-      var nw = Math.min(1000, Math.max(220, pinchStart.w * pinchStart.d / d));
-      zoom(nw / vb.w);
-    }
-  });
-  function endPointer(e){
-    delete pointers[e.pointerId];
-    if (!Object.keys(pointers).length){ panStart = null; pinchStart = null; svg.classList.remove('grabbing'); }
-  }
-  svg.addEventListener('pointerup', endPointer);
-  svg.addEventListener('pointercancel', endPointer);
-  svg.addEventListener('dblclick', function(e){
-    var pt = clientToSvg(e.clientX, e.clientY);
-    zoom(.6, pt.x, pt.y);
-  });
 })();
 
 /* ════════════ JOURNAL TABS · COUNTERS · TYPEWRITER ════════════ */
 (function(){
   var tabs = document.querySelectorAll('.js-tab');
+  if (!tabs.length) return;
   var pagesJ = document.querySelectorAll('.js-page');
   tabs.forEach(function(t){
     t.addEventListener('click', function(){
@@ -944,100 +624,14 @@ document.querySelectorAll('form[data-notify]').forEach(function(f){
   f.addEventListener('submit', function(e){
     e.preventDefault();
     var name = (f.name.value || '').split(' ')[0];
-    var plot = null;
-    try { plot = sessionStorage.getItem('tfs-plot-interest'); } catch(err){}
     f.querySelector('.wc-submit').textContent = 'Held ✓ — we’ll write to you';
     f.querySelector('.wc-submit').disabled = true;
-    toast('Thank you' + (name ? ', ' + name : '') + ' — a morning is held' + (plot ? ' (plot ' + plot + ' noted)' : '') + '. We reply personally, usually within a day.');
+    toast('Thank you' + (name ? ', ' + name : '') + ' — a morning is held. We reply personally, usually within a day.');
   });
 })();
 (function(){
   var track = document.getElementById('tickerTrack');
   if (track) track.innerHTML += track.innerHTML;
-})();
-
-/* ════════════ AMBIENT · leaves, pollen, a butterfly ════════════ */
-(function(){
-  if (reduced) return;
-  var cv = document.getElementById('ambient');
-  var ctx = cv.getContext('2d');
-  var W, H, dpr = Math.min(window.devicePixelRatio || 1, 1.6);
-  function size(){
-    W = window.innerWidth; H = window.innerHeight;
-    cv.width = W * dpr; cv.height = H * dpr;
-    cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  size(); window.addEventListener('resize', size);
-  var nLeaf = isTouch ? 7 : 13, nPol = isTouch ? 10 : 20;
-  var leaves = [], pollen = [];
-  var LEAF_COLORS = ['#7d8a5a', '#9aa06b', '#b08d3f', '#8a7a4a'];
-  function mkLeaf(top){
-    return {
-      x: Math.random() * W, y: top ? -30 : Math.random() * H,
-      s: 7 + Math.random() * 8, a: Math.random() * Math.PI * 2,
-      va: (Math.random() - .5) * .02, vy: .25 + Math.random() * .45,
-      ph: Math.random() * Math.PI * 2, amp: 18 + Math.random() * 26,
-      c: LEAF_COLORS[(Math.random() * LEAF_COLORS.length) | 0], o: .22 + Math.random() * .3
-    };
-  }
-  function mkPol(){
-    return { x: Math.random() * W, y: Math.random() * H, r: .8 + Math.random() * 1.6,
-      vx: .06 + Math.random() * .18, ph: Math.random() * 9, o: .12 + Math.random() * .22 };
-  }
-  for (var i = 0; i < nLeaf; i++) leaves.push(mkLeaf(false));
-  for (var j = 0; j < nPol; j++) pollen.push(mkPol());
-  var fly = null, nextFly = Date.now() + 22000 + Math.random() * 30000;
-  function drawLeaf(l, t){
-    var sway = Math.sin(t * .0006 + l.ph) * l.amp * .015;
-    ctx.save();
-    ctx.translate(l.x + Math.sin(t * .0005 + l.ph) * l.amp * .06, l.y);
-    ctx.rotate(l.a + sway);
-    ctx.globalAlpha = l.o;
-    ctx.fillStyle = l.c;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, l.s, l.s * .34, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = l.o * .8;
-    ctx.strokeStyle = '#4A473F'; ctx.lineWidth = .5;
-    ctx.beginPath(); ctx.moveTo(-l.s, 0); ctx.lineTo(l.s, 0); ctx.stroke();
-    ctx.restore();
-  }
-  var hidden = false;
-  document.addEventListener('visibilitychange', function(){ hidden = document.hidden; });
-  function frame(t){
-    requestAnimationFrame(frame);
-    if (hidden) return;
-    ctx.clearRect(0, 0, W, H);
-    leaves.forEach(function(l){
-      l.y += l.vy; l.a += l.va; l.x += Math.sin(t * .0004 + l.ph) * .3;
-      if (l.y > H + 40){ Object.assign(l, mkLeaf(true)); }
-      drawLeaf(l, t);
-    });
-    ctx.fillStyle = '#E8B23A';
-    pollen.forEach(function(p){
-      p.x += p.vx; p.y += Math.sin(t * .001 + p.ph) * .18;
-      if (p.x > W + 10) { p.x = -10; p.y = Math.random() * H; }
-      ctx.globalAlpha = p.o * (0.7 + 0.3 * Math.sin(t * .002 + p.ph));
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
-    });
-    ctx.globalAlpha = 1;
-    // an occasional butterfly, crossing unhurriedly
-    if (!fly && Date.now() > nextFly){
-      fly = { x: -30, y: H * (.25 + Math.random() * .4), vx: .9 + Math.random() * .5, ph: Math.random() * 9 };
-    }
-    if (fly){
-      fly.x += fly.vx; fly.y += Math.sin(t * .003 + fly.ph) * .9;
-      var flap = Math.abs(Math.sin(t * .02));
-      ctx.save(); ctx.translate(fly.x, fly.y); ctx.globalAlpha = .5;
-      ctx.fillStyle = '#B7803B';
-      ctx.beginPath(); ctx.ellipse(-4, 0, 5, 3 + flap * 4, -.5, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(4, 0, 5, 3 + flap * 4, .5, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-      if (fly.x > W + 40){ fly = null; nextFly = Date.now() + 25000 + Math.random() * 40000; }
-    }
-  }
-  requestAnimationFrame(frame);
 })();
 
 /* cursor glow */
@@ -1050,14 +644,13 @@ document.querySelectorAll('form[data-notify]').forEach(function(f){
   document.addEventListener('mouseleave', function(){ g.style.opacity = 0; });
 })();
 
-/* ════════════ 3D ORCHARD · lazy ════════════ */
+/* ════════════ 3D ORCHARD · lazy (home only) ════════════ */
 (function(){
   var stage = document.getElementById('orchardStage');
   var canvas = document.getElementById('orchardCanvas');
   if (!stage || !canvas) return;
   window.__orchardProgress = 0;
 
-  // captions follow scroll progress
   var caps = [].slice.call(document.querySelectorAll('.ocap'));
   function setCaption(p){
     var idx = Math.min(3, Math.floor(p * 4));
@@ -1066,7 +659,7 @@ document.querySelectorAll('form[data-notify]').forEach(function(f){
 
   if (hasGsap && !reduced){
     ScrollTrigger.create({
-      trigger: stage, start: 'top 70%', end: 'bottom bottom', scrub: .4,
+      trigger: stage, start: 'top 70%', end: 'bottom bottom', scrub: .6,
       onUpdate: function(self){
         window.__orchardProgress = self.progress;
         setCaption(self.progress);
@@ -1086,7 +679,7 @@ document.querySelectorAll('form[data-notify]').forEach(function(f){
       if (en.isIntersecting && !loaded){
         loaded = true; io.disconnect();
         var s = document.createElement('script');
-        s.src = 'js/orchard.js';
+        s.src = '/js/orchard.js';
         s.onload = function(){ if (window.initOrchard) window.initOrchard(canvas, { reduced: reduced }); };
         document.head.appendChild(s);
       }

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Community — The Farm Stories</title>
+<meta name="description" content="The families' circle is being written. Leave your email and we'll write to you the day it opens.">
+<meta name="theme-color" content="#F4EFE4">
+<link rel="icon" type="image/png" href="/assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Karla:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<div id="cursorGlow" aria-hidden="true"></div>
+
+<div class="stream-wrap" aria-hidden="true">
+  <svg viewBox="0 0 90 2400" preserveAspectRatio="xMidYMin meet">
+    <path id="streamPath" d="M46,0 C30,120 66,220 44,330 C24,430 62,520 48,640 C34,760 64,860 42,980 C26,1090 60,1180 46,1300 C32,1420 62,1520 44,1650 C28,1770 58,1880 46,2000 C36,2110 58,2220 44,2340 L44,2400"/>
+  </svg>
+</div>
+
+<header>
+  <div class="nav-inner">
+    <a class="brand" href="/" aria-label="The Farm Stories — home">
+      <img src="/assets/logo.png" alt="The Farm Stories logo">
+      <span><span class="brand-name">The Farm Stories</span><br><span class="brand-tag">Keepers of farm stories</span></span>
+    </a>
+    <nav class="chapters" aria-label="Pages">
+      <a href="/about">About us</a>
+      <a href="/projects">Our Projects</a>
+      <a href="/portal">The Portal</a>
+      <a href="/community" class="active" aria-current="page">The Community</a>
+      <a href="/agritech">Agri-tech</a>
+      <a href="/whats-new">What's New</a>
+    </nav>
+    <a class="nav-cta" href="/#chapter">Write Your Chapter</a>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main id="top">
+
+  <section id="coming" style="border-bottom:1.5px solid var(--ink)">
+    <div class="coming-panels" style="grid-template-columns:1fr">
+      <div class="coming-panel reveal in" style="min-height:calc(100vh - 70px);display:flex;flex-direction:column;justify-content:center">
+        <div class="cp-art" aria-hidden="true">
+          <svg viewBox="0 0 300 150"><g stroke="#F0E9D8" stroke-width="2" fill="none" stroke-linecap="round">
+            <circle cx="150" cy="66" r="30"/><path d="M132,100 q18,16 36,0"/>
+            <path d="M70,120 q40,-26 80,-8 M230,120 q-40,-26 -80,-8" opacity=".5"/>
+            <path d="M143,58 a4,4 0 1,1 .1,0 M160,58 a4,4 0 1,1 .1,0" fill="#F0E9D8"/>
+          </g><circle cx="150" cy="30" r="7" fill="#E8B23A"/></svg>
+        </div>
+        <p class="cp-kicker">The Community</p>
+        <h3>Another chapter<br><em>is being written.</em></h3>
+        <p class="cp-body">The families' circle — photographs from the verandah, harvest counts, seasonal gatherings at Mango Meadows and the occasional recipe. Owners and invited guests only. We'll write to you the day it opens.</p>
+        <form class="notify" data-notify>
+          <label class="sr-only" for="nc-email">Email address</label>
+          <input id="nc-email" type="email" required placeholder="Your email — we'll write when it opens">
+          <button type="submit" class="btn btn-gold">Notify me</button>
+        </form>
+        <p style="margin-top:34px"><a href="/whats-new" style="color:var(--yellow);font-weight:700;font-size:13.5px;text-decoration:none;border-bottom:2px solid var(--yellow);padding-bottom:2px">Meanwhile — see the gatherings →</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="page">
+  <div class="colophon">
+    <img src="/assets/logo.png" alt="The Farm Stories emblem" loading="lazy" decoding="async">
+    <p class="colophon-text">The Farm Stories keeps the stories of India's farms — verified estates, living communities, slow gatherings and an honest record. Mango Meadows, in the Nilgiris, is Story One. The shelf has room for a few more.</p>
+    <nav class="colophon-links" aria-label="Footer">
+      <a href="/about">About us</a>
+      <a href="/projects">Our Projects</a>
+      <a href="/portal">The Portal</a>
+      <a href="/community">The Community</a>
+      <a href="/agritech">Agri-tech</a>
+      <a href="/whats-new">What's New</a>
+    </nav>
+  </div>
+  <div class="fine">
+    <span>© 2026 The Farm Stories · Written in the Nilgiris · hello@thefarmstories.estate</span>
+    <span>Every claim in these pages has a document behind it.</span>
+  </div>
+</footer>
+
+<div class="sticky-cta" id="stickyCta" aria-hidden="true">
+  <a class="btn btn-ink" href="/#chapter">Plan a visit</a>
+  <a class="btn btn-gold" href="https://wa.me/919003746953" target="_blank" rel="noopener">WhatsApp</a>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/js/vendor/gsap.min.js" defer></script>
+<script src="/js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="/js/vendor/lenis.min.js" defer></script>
+<script src="/js/main.js" defer></script>
+</body>
+</html>

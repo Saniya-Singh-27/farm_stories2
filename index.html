@@ -8,11 +8,11 @@
 <meta property="og:title" content="The Farm Stories — Land, well told.">
 <meta property="og:description" content="A living storybook of verified farms. Story One: Mango Meadows, Nilgiris foothills.">
 <meta name="theme-color" content="#F4EFE4">
-<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Karla:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="/css/main.css">
 </head>
 <body class="locked">
 
@@ -22,16 +22,12 @@
   <div class="stage">
     <div class="tome" id="tome" tabindex="0" role="button" aria-label="Open the book — click or swipe to turn the pages">
       <div class="tome-back"></div>
-
-      <!-- last visible page under all leaves -->
       <div class="tome-page base-page">
         <div class="page-face recto">
           <p class="pg-kicker">and so the story begins…</p>
           <div class="pg-orn">❦</div>
         </div>
       </div>
-
-      <!-- leaf 3 -->
       <div class="tome-page leaf" data-leaf="3">
         <div class="page-face recto">
           <p class="pg-kicker">Chapter I</p>
@@ -43,8 +39,6 @@
           <p class="pg-body pg-quote">“Good land, told well, lasts generations.”</p>
         </div>
       </div>
-
-      <!-- leaf 2 -->
       <div class="tome-page leaf" data-leaf="2">
         <div class="page-face recto">
           <p class="pg-kicker">A note to the reader</p>
@@ -56,8 +50,6 @@
           <div class="pg-orn">✳</div>
         </div>
       </div>
-
-      <!-- leaf 1 : title page -->
       <div class="tome-page leaf" data-leaf="1">
         <div class="page-face recto">
           <p class="pg-kicker">The Farm Stories presents</p>
@@ -68,12 +60,10 @@
           <div class="pg-orn">❦</div>
         </div>
       </div>
-
-      <!-- cover -->
       <div class="tome-cover" data-leaf="0">
         <div class="page-face cover-front">
           <span class="spine-edge"></span>
-          <img class="cover-logo-img" src="assets/logo.png" alt="">
+          <img class="cover-logo-img" src="/assets/logo.png" alt="">
           <div class="cover-title">The Farm<br>Stories</div>
           <div class="cover-sub">Land, well told.</div>
           <div class="cover-seal">est.<br>2026</div>
@@ -88,8 +78,6 @@
   </div>
 </div>
 
-<!-- ambient leaves / pollen -->
-<canvas id="ambient" aria-hidden="true"></canvas>
 <div id="cursorGlow" aria-hidden="true"></div>
 
 <!-- marginal stream signature -->
@@ -102,17 +90,17 @@
 <!-- ═══════════ NAV ═══════════ -->
 <header>
   <div class="nav-inner">
-    <a class="brand" href="#top" aria-label="The Farm Stories — home">
-      <img src="assets/logo.png" alt="The Farm Stories logo">
+    <a class="brand" href="/" aria-label="The Farm Stories — home">
+      <img src="/assets/logo.png" alt="The Farm Stories logo">
       <span><span class="brand-name">The Farm Stories</span><br><span class="brand-tag">Keepers of farm stories</span></span>
     </a>
-    <nav class="chapters" aria-label="Chapters">
-      <a href="#beginning"  data-chapter="beginning">The Beginning</a>
-      <a href="#stories"    data-chapter="stories">Stories</a>
-      <a href="#orchard"    data-chapter="orchard">The Orchard</a>
-      <a href="#library"    data-chapter="library">The Library</a>
-      <a href="#gatherings" data-chapter="gatherings">Gatherings</a>
-      <a href="#journal"    data-chapter="journal">The Journal</a>
+    <nav class="chapters" aria-label="Pages">
+      <a href="/about">About us</a>
+      <a href="/projects">Our Projects</a>
+      <a href="/portal">The Portal</a>
+      <a href="/community">The Community</a>
+      <a href="/agritech">Agri-tech</a>
+      <a href="/whats-new">What's New</a>
     </nav>
     <a class="nav-cta" href="#chapter">Write Your Chapter</a>
   </div>
@@ -127,7 +115,7 @@
 
       <!-- reality layer : video + photograph -->
       <div class="hero-real" id="heroReal" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1800&q=80" alt="" loading="eager" fetchpriority="high">
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1800&q=80" alt="" loading="lazy" decoding="async">
         <video id="heroVideo" muted loop playsinline preload="none"
           poster="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1800&q=80">
           <source data-src="https://videos.pexels.com/video-files/2758322/2758322-uhd_2560_1440_30fps.mp4" type="video/mp4">
@@ -208,8 +196,8 @@
         <h1 id="heroTitle">Every farm has a story.<br><em>We keep them.</em></h1>
         <p class="hero-sub">Verified farms, living communities and seasonal retreats — every estate documented like a book, and nothing listed until its story checks out.</p>
         <div class="hero-actions">
-          <a class="btn btn-ink" href="#stories" data-cta="hero-read">Read Story One</a>
-          <a class="btn btn-ghost" href="#library" data-cta="hero-library">Open the Library</a>
+          <a class="btn btn-ink" href="/projects" data-cta="hero-read">Read Story One</a>
+          <a class="btn btn-ghost" href="/portal" data-cta="hero-portal">Open the Portal</a>
         </div>
       </div>
       <div class="scroll-cue">scroll — the sketch comes to life</div>
@@ -224,18 +212,17 @@
     <span><i>✓</i> Boutique by design — 26 families, never more</span>
   </div>
 
-  <!-- ═══════════ CHAPTER I · THE BEGINNING ═══════════ -->
+  <!-- ═══════════ THE BEGINNING (teaser) ═══════════ -->
   <section class="chapter page" id="beginning">
     <div class="chapter-head reveal"><span class="chapter-no">Chapter I</span><h2 class="split">The Beginning</h2></div>
     <p class="chapter-intro reveal">Why we keep farms the way libraries keep first editions — <em>slowly, honestly and for good.</em></p>
     <div class="story-one">
       <div class="story-narrative reveal">
         <p class="opener dropcap">Years before this platform had a name, someone planted mango trees on a gentle slope in the Nilgiris foothills. The trees grew. The stream kept its course. And when we found the orchard, we made a decision that became our founding rule: we would never sell a farm whose story we couldn't tell in full.</p>
-        <p>The managed farmland category is full of promises — renders of orchards that don't exist yet, communities that never gather, reports that stop arriving after registration. We decided to be the opposite of that. <strong>This is not a promise. These mangoes exist.</strong> The trees are decades old and already in harvest. The families are real. The documents are open.</p>
-        <p>We would rather lose a sale than lose your trust. That single sentence is our entire business plan.</p>
+        <p><strong>This is not a promise. These mangoes exist.</strong> The trees are decades old and already in harvest. The families are real. The documents are open.</p>
         <div class="story-actions">
-          <a class="btn btn-ink" href="#stories">Read Story One</a>
-          <a class="btn btn-ghost" href="#gatherings">Meet us at the farm</a>
+          <a class="btn btn-ink" href="/about">Read our full story</a>
+          <a class="btn btn-ghost" href="/projects">Open Story One</a>
         </div>
       </div>
       <aside class="story-card tilt reveal" aria-label="Our founding standard">
@@ -253,14 +240,31 @@
     </div>
   </section>
 
-  <!-- ═══════════ CHAPTER II · STORIES (the shelf) ═══════════ -->
+  <!-- ═══════════ THE MINIATURE ORCHARD (3D) ═══════════ -->
+  <section class="chapter orchard-chapter" id="orchard">
+    <div class="page">
+      <div class="chapter-head reveal"><span class="chapter-no">Chapter II</span><h2 class="split">The Orchard, in Miniature</h2></div>
+      <p class="chapter-intro reveal">Mango Meadows as a handcrafted model — <em>scroll, and the land turns gently beneath the light.</em> Terrain, trees, the stream, the pavilion; all of it real, all of it already there.</p>
+    </div>
+    <div class="orchard-stage" id="orchardStage">
+      <canvas id="orchardCanvas" aria-label="A slowly rotating miniature model of the Mango Meadows orchard"></canvas>
+      <div class="orchard-captions" aria-hidden="true">
+        <p class="ocap" data-at="0">300+ mature mango trees, planted three decades ago</p>
+        <p class="ocap" data-at="1">A stream keeps the western boundary green all year</p>
+        <p class="ocap" data-at="2">The pavilion — one table, open sky, harvest evenings</p>
+        <p class="ocap" data-at="3">26 homesteads, folded quietly between the trees</p>
+      </div>
+      <noscript><p style="text-align:center;padding:40px">Enable JavaScript to walk through the miniature orchard.</p></noscript>
+    </div>
+  </section>
+
+  <!-- ═══════════ THE SHELF (teaser → /projects) ═══════════ -->
   <section class="chapter page" id="stories">
-    <div class="chapter-head reveal"><span class="chapter-no">Chapter II</span><h2 class="split">Stories</h2></div>
+    <div class="chapter-head reveal"><span class="chapter-no">Chapter III</span><h2 class="split">Stories</h2></div>
     <p class="chapter-intro reveal">Every farm is a chapter. Every project is a book. <em>Take one down from the shelf and open it.</em></p>
 
     <div class="bookshelf reveal" id="bookshelf">
-      <!-- Story One — openable hardbound -->
-      <button class="shelf-book story-live" id="openStoryOne" aria-label="Open the book — Mango Meadows, Story One" aria-haspopup="dialog">
+      <button class="shelf-book story-live" id="openStoryOne" aria-label="Open the book — Mango Meadows, Story One">
         <span class="sb-spine"></span>
         <span class="sb-cover">
           <span class="sb-kicker">Story One</span>
@@ -279,7 +283,6 @@
         <span class="sb-pages" aria-hidden="true"></span>
       </button>
 
-      <!-- Story Two -->
       <div class="shelf-book story-soon" tabindex="0" aria-label="Story Two — in verification">
         <span class="sb-spine"></span>
         <span class="sb-cover">
@@ -291,13 +294,12 @@
               <circle cx="60" cy="86" r="9" stroke-dasharray="4 4"/><circle cx="140" cy="88" r="8" stroke-dasharray="4 4"/>
             </g></svg>
           </span>
-          <span class="sb-place">A coffee estate · Coorg</span>
+          <span class="sb-place">Coffee Canopy · Coorg</span>
           <span class="sb-seal soon">being<br>read</span>
         </span>
         <span class="sb-pages" aria-hidden="true"></span>
       </div>
 
-      <!-- Story Three -->
       <div class="shelf-book story-soon" tabindex="0" aria-label="Your chapter — begin here">
         <span class="sb-spine"></span>
         <span class="sb-cover">
@@ -315,258 +317,7 @@
         <span class="sb-pages" aria-hidden="true"></span>
       </div>
     </div>
-    <p class="shelf-note reveal">Fourteen farms approached the Library this season. <em>One was admitted.</em></p>
-  </section>
-
-  <!-- ═══════════ CHAPTER III · THE MINIATURE ORCHARD (3D) ═══════════ -->
-  <section class="chapter orchard-chapter" id="orchard">
-    <div class="page">
-      <div class="chapter-head reveal"><span class="chapter-no">Chapter III</span><h2 class="split">The Orchard, in Miniature</h2></div>
-      <p class="chapter-intro reveal">Mango Meadows as a handcrafted model — <em>scroll, and the land turns gently beneath the light.</em> Terrain, trees, the stream, the pavilion; all of it real, all of it already there.</p>
-    </div>
-    <div class="orchard-stage" id="orchardStage">
-      <canvas id="orchardCanvas" aria-label="A slowly rotating miniature model of the Mango Meadows orchard"></canvas>
-      <div class="orchard-captions" aria-hidden="true">
-        <p class="ocap" data-at="0">300+ mature mango trees, planted three decades ago</p>
-        <p class="ocap" data-at="1">A stream keeps the western boundary green all year</p>
-        <p class="ocap" data-at="2">The pavilion — one table, open sky, harvest evenings</p>
-        <p class="ocap" data-at="3">26 homesteads, folded quietly between the trees</p>
-      </div>
-      <noscript><p style="text-align:center;padding:40px">Enable JavaScript to walk through the miniature orchard.</p></noscript>
-    </div>
-  </section>
-
-  <!-- ═══════════ CHAPTER IV · THE LIBRARY / PLOT EXPLORER ═══════════ -->
-  <section class="chapter page" id="library">
-    <div class="chapter-head reveal"><span class="chapter-no">Chapter IV</span><h2 class="split">The Library of Plots</h2></div>
-    <p class="chapter-intro reveal">The Mango Meadows masterplan, drawn like the endpaper map of a novel — <em>every plot a page you can hold.</em> Zoom, wander, compare, and mark the ones that speak to you.</p>
-
-    <div class="explorer reveal">
-      <div class="explorer-toolbar" role="toolbar" aria-label="Plot explorer controls">
-        <div class="fgroup"><span class="flabel">Status</span>
-          <div class="fbtns" data-pfilter="status">
-            <button class="fbtn on" data-v="all">All</button>
-            <button class="fbtn" data-v="available">Available</button>
-            <button class="fbtn" data-v="reserved">Reserved</button>
-            <button class="fbtn" data-v="sold">Taken</button>
-          </div>
-        </div>
-        <div class="fgroup"><span class="flabel">Size</span>
-          <div class="fbtns" data-pfilter="size">
-            <button class="fbtn on" data-v="all">All</button>
-            <button class="fbtn" data-v="s">20–23 c</button>
-            <button class="fbtn" data-v="m">24–27 c</button>
-            <button class="fbtn" data-v="l">28–30 c</button>
-          </div>
-        </div>
-        <div class="fgroup"><span class="flabel">Character</span>
-          <div class="fbtns" data-pfilter="trait">
-            <button class="fbtn on" data-v="all">All</button>
-            <button class="fbtn" data-v="corner">Corner</button>
-            <button class="fbtn" data-v="stream">By the stream</button>
-            <button class="fbtn" data-v="view">Valley view</button>
-            <button class="fbtn" data-v="grove">Old grove</button>
-          </div>
-        </div>
-        <div class="fgroup"><span class="flabel">Lens</span>
-          <div class="fbtns">
-            <button class="fbtn" id="sunToggle" aria-pressed="false">☀ Sun path</button>
-            <button class="fbtn" id="viewToggle" aria-pressed="false">🛰 Terrain</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="explorer-body">
-        <div class="plan-wrap" id="planWrap">
-          <svg id="planSvg" viewBox="0 0 1000 720" role="img" aria-label="Interactive masterplan of the 26 plots at Mango Meadows"></svg>
-          <div class="plan-tip" id="planTip" role="status"></div>
-          <div class="plan-zoom" aria-hidden="false">
-            <button id="zoomIn" aria-label="Zoom in">+</button>
-            <button id="zoomOut" aria-label="Zoom out">−</button>
-            <button id="zoomReset" aria-label="Reset view">⌂</button>
-          </div>
-          <p class="plan-hint">drag to wander · scroll or pinch to lean closer</p>
-          <div class="plan-legend">
-            <span><i class="lg av"></i>Available</span>
-            <span><i class="lg rs"></i>Reserved</span>
-            <span><i class="lg sd"></i>Taken</span>
-            <span><i class="lg bm"></i>Bookmarked</span>
-          </div>
-        </div>
-
-        <aside class="plot-panel" id="plotPanel" aria-live="polite">
-          <div class="pp-empty" id="ppEmpty">
-            <div class="pg-orn">❦</div>
-            <p class="results-note" id="planNote">All 26 plots on the map.</p>
-            <p class="pp-whisper">Touch a plot on the map to read its page — its trees, its light, its distance from the stream.</p>
-            <p class="pp-scarcity" id="scarcityNote"></p>
-          </div>
-          <div class="pp-detail" id="ppDetail" hidden></div>
-          <div class="pp-compare" id="ppCompare" hidden></div>
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════ CHAPTER V · GATHERINGS ═══════════ -->
-  <section class="chapter page" id="gatherings">
-    <div class="chapter-head reveal"><span class="chapter-no">Chapter V</span><h2 class="split">The Gatherings</h2></div>
-    <p class="chapter-intro reveal">Farm life is better entered together — tables under trees, harvest mornings, slow weekends. <em>Tap a gathering to hold a place.</em></p>
-    <div class="gatherings">
-      <div class="gather-copy reveal">
-        <p>Before anyone owns a farm with us, we'd rather they sit at one of our tables. Walk the orchard at first light. Press oil, pick fruit, do nothing at all. The community is not something we advertise — it's something you meet.</p>
-        <p class="pull">“You don't visit a farm. You enter its story — and some people simply decide to stay in it.”</p>
-        <p>Gatherings are small and unhurried. Every one of them is written into the farm's book afterwards.</p>
-      </div>
-      <ul class="events reveal" aria-label="Upcoming gatherings">
-        <li class="event" data-rsvp><div class="date"><div class="d">18</div><div class="m">Jul</div></div>
-          <div class="info"><h4>Monsoon Planting Morning</h4><p>Mango Meadows, Agali · saplings, first rain &amp; a long lunch</p></div>
-          <span class="spots">Few places left</span></li>
-        <li class="event" data-rsvp><div class="date"><div class="d">09</div><div class="m">Aug</div></div>
-          <div class="info"><h4>Full-Moon Supper Under the Trees</h4><p>Mango Meadows, Agali · one table, open sky, local kitchen</p></div>
-          <span class="spots">By invitation</span></li>
-        <li class="event" data-rsvp><div class="date"><div class="d">14</div><div class="m">Sep</div></div>
-          <div class="info"><h4>The Slow Weekend</h4><p>Two days, no itinerary · verandah, orchard walks &amp; the farm's book</p></div>
-          <span class="spots">Waitlist open</span></li>
-        <li class="event past"><div class="date"><div class="d">07</div><div class="m">Jun</div></div>
-          <div class="info"><h4>First Harvest Weekend</h4><p>Mango Meadows, Agali · the season's first picking, now in the record</p></div>
-          <span class="spots">Chapter closed</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ═══════════ CHAPTER VI · MY FARM JOURNAL ═══════════ -->
-  <section class="chapter page" id="diary">
-    <div class="chapter-head reveal"><span class="chapter-no">Chapter VI</span><h2 class="split">My Farm Journal</h2></div>
-    <p class="chapter-intro reveal">Owners don't get dashboards. They get a journal — <em>drone flights, harvest counts, the agronomist's notes and every invoice, written into one record you can open from anywhere.</em></p>
-
-    <div class="journal-spread reveal" id="journalSpread">
-      <div class="js-tabs" role="tablist" aria-label="Journal sections">
-        <button class="js-tab on" role="tab" aria-selected="true" data-jpage="timeline">Timeline</button>
-        <button class="js-tab" role="tab" aria-selected="false" data-jpage="report">Monthly report</button>
-        <button class="js-tab" role="tab" aria-selected="false" data-jpage="harvest">Harvest</button>
-        <button class="js-tab" role="tab" aria-selected="false" data-jpage="papers">Papers</button>
-      </div>
-      <div class="js-book">
-        <div class="js-page on" data-jpage="timeline">
-          <p class="bookplate">Mango Meadows · plot 07 · a sample page</p>
-          <ul class="jtimeline">
-            <li><span class="jt-when">12 Apr</span><span class="jt-what">First bloom. Lush canopy and a soft summer wind.</span></li>
-            <li><span class="jt-when">03 Jun</span><span class="jt-what">Fruit set strong. The bees are happy.</span></li>
-            <li><span class="jt-when">21 Jul</span><span class="jt-what">Early pick for the village. Shared with the team.</span></li>
-            <li><span class="jt-when">18 Aug</span><span class="jt-what">Main harvest. The trees are generous this season.</span></li>
-          </ul>
-          <p class="jfoot">“Good land, told well, lasts generations.”</p>
-        </div>
-        <div class="js-page" data-jpage="report">
-          <p class="bookplate">June, at the orchard</p>
-          <div class="diary-entry"><span class="t">Rainfall</span><span class="v"><span class="count" data-to="184">0</span> mm</span></div>
-          <div class="diary-entry"><span class="t">Soil moisture, Block A</span><span class="v"><span class="count" data-to="67">0</span>%</span></div>
-          <div class="diary-entry"><span class="t">Trees in fruit</span><span class="v"><span class="count" data-to="92">0</span>%</span></div>
-          <div class="diary-entry"><span class="t">Drone flight</span><span class="v">12 June · filed</span></div>
-          <div class="diary-entry"><span class="t">Maintenance</span><span class="v">Fencing walk-through · done</span></div>
-          <div class="diary-entry"><span class="t">Agronomist's note</span><span class="v typeline" id="typeline"></span></div>
-        </div>
-        <div class="js-page" data-jpage="harvest">
-          <p class="bookplate">The season, in crates</p>
-          <div class="hbars">
-            <div class="hbar"><span>Apr</span><i style="--h:18%"></i></div>
-            <div class="hbar"><span>May</span><i style="--h:42%"></i></div>
-            <div class="hbar"><span>Jun</span><i style="--h:70%"></i></div>
-            <div class="hbar"><span>Jul</span><i style="--h:88%"></i></div>
-            <div class="hbar"><span>Aug</span><i style="--h:100%"></i></div>
-          </div>
-          <p class="jfoot">Every crate counted, every kilogram in the record — and the first pick always goes to the village.</p>
-        </div>
-        <div class="js-page" data-jpage="papers">
-          <p class="bookplate">The documents drawer</p>
-          <ul class="jdocs">
-            <li><span>Patta &amp; chitta</span><em>verified · on file</em></li>
-            <li><span>Encumbrance certificate</span><em>30 years · clean</em></li>
-            <li><span>Registered layout</span><em>approved</em></li>
-            <li><span>Sale deed template</span><em>CA-reviewed</em></li>
-            <li><span>Monthly maintenance invoices</span><em>itemised</em></li>
-          </ul>
-          <p class="jfoot">Every claim on these pages has a document behind it. Ask, and it's yours to read.</p>
-        </div>
-        <span class="stamp">A preview</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════ ANOTHER CHAPTER · COMMUNITY + AGRI-TECH ═══════════ -->
-  <section class="chapter" id="coming">
-    <div class="coming-panels">
-      <div class="coming-panel reveal" id="communitySoon">
-        <div class="cp-art" aria-hidden="true">
-          <svg viewBox="0 0 300 150"><g stroke="#F0E9D8" stroke-width="2" fill="none" stroke-linecap="round">
-            <circle cx="150" cy="66" r="30"/><path d="M132,100 q18,16 36,0"/>
-            <path d="M70,120 q40,-26 80,-8 M230,120 q-40,-26 -80,-8" opacity=".5"/>
-            <path d="M143,58 a4,4 0 1,1 .1,0 M160,58 a4,4 0 1,1 .1,0" fill="#F0E9D8"/>
-          </g><circle cx="150" cy="30" r="7" fill="#E8B23A"/></svg>
-        </div>
-        <p class="cp-kicker">The Community</p>
-        <h3>Another chapter<br><em>is being written.</em></h3>
-        <p class="cp-body">The families' circle — photographs from the verandah, harvest counts and the occasional recipe. Owners and invited guests only.</p>
-        <form class="notify" data-notify>
-          <label class="sr-only" for="nc-email">Email address</label>
-          <input id="nc-email" type="email" required placeholder="Your email — we'll write when it opens">
-          <button type="submit" class="btn btn-gold">Notify me</button>
-        </form>
-      </div>
-      <div class="coming-panel alt reveal" id="agritechSoon">
-        <div class="cp-art" aria-hidden="true">
-          <svg viewBox="0 0 300 150"><g stroke="#F0E9D8" stroke-width="2" fill="none" stroke-linecap="round">
-            <path d="M150,120 l0,-44 M150,76 q-16,-8 -14,-26 q18,-2 22,14 M150,90 q16,-8 14,-24 q-18,-2 -20,12"/>
-            <path d="M92,120 l116,0" opacity=".5"/>
-            <circle cx="150" cy="40" r="4" fill="#E8B23A" stroke="none"/>
-            <path d="M120,44 q30,-24 60,0" stroke-dasharray="2 6"/>
-          </g></svg>
-        </div>
-        <p class="cp-kicker">The Farm Diary · Agri-tech</p>
-        <h3>The instruments<br><em>are being planted.</em></h3>
-        <p class="cp-body">Soil and water sensors, satellite passes and drone documentation — the old farm diary, kept with better instruments. Arriving first at Mango Meadows.</p>
-        <form class="notify" data-notify>
-          <label class="sr-only" for="na-email">Email address</label>
-          <input id="na-email" type="email" required placeholder="Your email — we'll write when it opens">
-          <button type="submit" class="btn btn-gold">Notify me</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════ CHAPTER VII · THE JOURNAL ═══════════ -->
-  <section class="chapter page" id="journal">
-    <div class="chapter-head reveal"><span class="chapter-no">Chapter VII</span><h2 class="split">The Journal</h2></div>
-    <p class="chapter-intro reveal">The latest pages — <em>what's growing, what's gathering, and what's being written about us.</em></p>
-    <div class="ticker reveal" aria-hidden="true">
-      <span class="ticker-label">This week</span>
-      <div class="ticker-view"><div class="ticker-track" id="tickerTrack">
-        <span>Story No. 002 enters verification — a Coorg coffee estate</span>
-        <span>184 mm of June rain at Mango Meadows, all in the record</span>
-        <span>Monsoon Planting Morning · 18 July · a few places left</span>
-        <span>The Farm Diary arrives first at Mango Meadows this year</span>
-        <span>Fourteen farms approached the Library this season · one admitted</span>
-      </div></div>
-    </div>
-    <div class="journal-feed">
-      <article class="clip reveal"><div class="meta"><span class="tag new">New chapter</span><span class="when">This week</span></div>
-        <h4>Story No. 002 enters verification</h4>
-        <p>A third-generation coffee estate in Coorg has approached the Library. Our readers are on the slopes; papers first, poetry later.</p>
-        <a href="#stories">See the shelf</a></article>
-      <article class="clip reveal"><div class="meta"><span class="tag">Farm update</span><span class="when">June</span></div>
-        <h4>The first harvest is in the record</h4>
-        <p>Mango Meadows completed its first owner-season picking. Crates counted, families fed, and page 14 added to the estate book.</p>
-        <a href="#diary">Open the journal</a></article>
-      <article class="clip reveal"><div class="meta"><span class="tag">Gathering</span><span class="when">July</span></div>
-        <h4>Monsoon planting — a few places left</h4>
-        <p>Saplings go into the ground on the 18th, first rain permitting. A long lunch follows, as it should.</p>
-        <a href="#gatherings">Request a place</a></article>
-      <article class="clip reveal"><div class="meta"><span class="tag press">Press</span><span class="when">June</span></div>
-        <h4>“The farmland platform that reads before it lists”</h4>
-        <p>A note on our verification standard — why fourteen farms approached us this season, and why only one was admitted.</p>
-        <a href="#beginning">Our standard</a></article>
-    </div>
+    <p class="shelf-note reveal">Fourteen farms approached the Library this season. <em>One was admitted.</em> &nbsp;·&nbsp; <a href="/projects" style="font-style:normal;font-weight:700">Browse Our Projects →</a></p>
   </section>
 
   <!-- ═══════════ WRITE YOUR CHAPTER ═══════════ -->
@@ -606,14 +357,15 @@
 
 <footer class="page">
   <div class="colophon">
-    <img src="assets/logo.png" alt="The Farm Stories emblem">
+    <img src="/assets/logo.png" alt="The Farm Stories emblem" loading="lazy" decoding="async">
     <p class="colophon-text">The Farm Stories keeps the stories of India's farms — verified estates, living communities, slow gatherings and an honest record. Mango Meadows, in the Nilgiris, is Story One. The shelf has room for a few more.</p>
     <nav class="colophon-links" aria-label="Footer">
-      <a href="#beginning">The Beginning</a>
-      <a href="#stories">Stories</a>
-      <a href="#library">The Library</a>
-      <a href="#gatherings">Gatherings</a>
-      <a href="#chapter">Write Your Chapter</a>
+      <a href="/about">About us</a>
+      <a href="/projects">Our Projects</a>
+      <a href="/portal">The Portal</a>
+      <a href="/community">The Community</a>
+      <a href="/agritech">Agri-tech</a>
+      <a href="/whats-new">What's New</a>
     </nav>
   </div>
   <div class="fine">
@@ -628,26 +380,12 @@
   <a class="btn btn-gold" href="https://wa.me/919003746953" target="_blank" rel="noopener">WhatsApp</a>
 </div>
 
-<!-- ═══════════ THE BOOK READER (Story One) ═══════════ -->
-<div class="reader" id="reader" role="dialog" aria-modal="true" aria-label="Mango Meadows — Story One" hidden>
-  <div class="reader-scrim" data-close></div>
-  <div class="reader-stage">
-    <button class="reader-close" data-close aria-label="Close the book">✕</button>
-    <div class="flipbook" id="flipbook"><!-- pages injected by js --></div>
-    <div class="reader-ui">
-      <button class="pageward" id="pgPrev" aria-label="Previous page">‹ previous</button>
-      <span class="reader-count" id="pgCount"></span>
-      <button class="pageward" id="pgNext" aria-label="Next page">next ›</button>
-    </div>
-  </div>
-</div>
-
 <!-- toast -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="js/vendor/gsap.min.js" defer></script>
-<script src="js/vendor/ScrollTrigger.min.js" defer></script>
-<script src="js/vendor/lenis.min.js" defer></script>
-<script src="js/main.js" defer></script>
+<script src="/js/vendor/gsap.min.js" defer></script>
+<script src="/js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="/js/vendor/lenis.min.js" defer></script>
+<script src="/js/main.js" defer></script>
 </body>
 </html>
