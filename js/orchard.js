@@ -24,8 +24,19 @@ function build(canvas, opts){
   var THREE = window.THREE;
   var reduced = !!opts.reduced;
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true,
+    powerPreference: 'low-power' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  // free GPU memory when the page is being torn down
+  window.addEventListener('pagehide', function(){
+    scene.traverse(function(o){
+      if (o.geometry) o.geometry.dispose();
+      if (o.material){
+        (Array.isArray(o.material) ? o.material : [o.material]).forEach(function(m){ m.dispose(); });
+      }
+    });
+    renderer.dispose();
+  }, { once: true });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 

@@ -7,11 +7,14 @@
 <meta name="description" content="Verified farms, living communities and seasonal retreats — beginning with Story One: Mango Meadows, a boutique managed mango orchard community in the Nilgiris foothills. 26 families. 30-year-old trees. Documentation first.">
 <meta property="og:title" content="The Farm Stories — Land, well told.">
 <meta property="og:description" content="A living storybook of verified farms. Story One: Mango Meadows, Nilgiris foothills.">
+<link rel="canonical" href="https://thefarmstories.estate">
+<meta property="og:image" content="https://thefarmstories.estate/assets/logo.png">
 <meta name="theme-color" content="#F4EFE4">
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Karla:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=75&auto=format">
 <link rel="stylesheet" href="/css/main.css">
 </head>
 <body class="locked">
@@ -134,10 +137,12 @@
 
       <!-- reality layer : video + photograph -->
       <div class="hero-real" id="heroReal" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1800&q=80" alt="" loading="lazy" decoding="async">
-        <video id="heroVideo" muted loop playsinline preload="none"
-          poster="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1800&q=80">
-          <source data-src="https://videos.pexels.com/video-files/2758322/2758322-uhd_2560_1440_30fps.mp4" type="video/mp4">
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=75&auto=format" alt="" width="1600" height="1067" loading="eager" decoding="async">
+        <video id="heroVideo" muted loop playsinline preload="none" width="1600" height="900"
+          poster="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=75&auto=format">
+          <!-- drop a compressed (≤8 MB) /assets/hero.webm in the repo to serve WebM first -->
+          <source data-src="/assets/hero.webm" type="video/webm">
+          <source data-src="https://videos.pexels.com/video-files/2758322/2758322-sd_640_360_30fps.mp4" type="video/mp4">
         </video>
         <div class="hero-real-tint"></div>
       </div>
@@ -213,11 +218,12 @@
       <div class="hero-copy">
         <p class="hero-eyebrow">India's keeper of farm stories</p>
         <h1 id="heroTitle">Every farm has a story.<br><em>We keep them.</em></h1>
-        <p class="hero-sub">Verified farms, living communities and seasonal retreats — every estate documented like a book, and nothing listed until its story checks out.</p>
+        <p class="hero-sub">The only farmland kept like a book — verified before it is listed, documented every month after you own it.</p>
         <div class="hero-actions">
           <a class="btn btn-ink" href="/projects" data-cta="hero-read">Read Story One</a>
-          <a class="btn btn-ghost" href="/portal" data-cta="hero-portal">Open the Portal</a>
+          <a class="btn-quiet" href="/portal" data-cta="hero-portal">or open the Portal →</a>
         </div>
+        <p class="hero-trust"><span>26 families</span><span>30-year-old orchards</span><span>Fully managed</span></p>
       </div>
       <div class="scroll-cue">scroll — the sketch comes to life</div>
     </div>
@@ -259,6 +265,8 @@
     </div>
   </section>
 
+  <p class="chapter-pass" aria-hidden="true">The story continues in the land itself —</p>
+
   <!-- ═══════════ THE MINIATURE ORCHARD (3D) ═══════════ -->
   <section class="chapter orchard-chapter" id="orchard">
     <div class="page">
@@ -276,6 +284,8 @@
       <noscript><p style="text-align:center;padding:40px">Enable JavaScript to walk through the miniature orchard.</p></noscript>
     </div>
   </section>
+
+  <p class="chapter-pass" aria-hidden="true">And the orchard is only the first of the books —</p>
 
   <!-- ═══════════ THE SHELF (teaser → /projects) ═══════════ -->
   <section class="chapter page" id="stories">
@@ -339,6 +349,8 @@
     <p class="shelf-note reveal">Fourteen farms approached the Library this season. <em>One was admitted.</em> &nbsp;·&nbsp; <a href="/projects" style="font-style:normal;font-weight:700">Browse Our Projects →</a></p>
   </section>
 
+  <p class="chapter-pass" aria-hidden="true">Every shelf keeps room for one more family —</p>
+
   <!-- ═══════════ WRITE YOUR CHAPTER ═══════════ -->
   <section class="chapter page" id="chapter">
     <div class="write-chapter reveal">
@@ -372,7 +384,15 @@
       </form>
     </div>
   </section>
+  <!-- the story's last line -->
+  <section class="coda reveal" aria-label="Closing">
+    <h2>Every farm has a story.<br><em>Yours begins here.</em></h2>
+    <p>The shelf has room for a few more families.</p>
+    <a class="btn btn-ink" href="#chapter">Write Your Chapter</a>
+  </section>
 </main>
+
+<div class="chapter-dot" id="chapterDot" aria-hidden="true"></div>
 
 <footer class="page">
   <div class="colophon">

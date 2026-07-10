@@ -11,7 +11,7 @@ Nilgiris foothills at Agali (26 families, 30-year-old trees, documentation first
 |---|---|
 | `/` | Home — intro book (3D page turns), ink-to-orchard hero morph with lazy video, trust strip, The Beginning teaser, Three.js miniature orchard, bookshelf teaser, Write Your Chapter form |
 | `/about` | About us — the founding story, house rules, three pillars, quote |
-| `/projects` | Our Projects — the bookshelf; Story One opens a flipbook reader with 7 turning pages; My Farm Journal preview |
+| `/projects` | Our Projects — the bookshelf; Story One opens a flipbook reader with 7 turning pages; the **plot explorer** (26 plots: hover, select, sticky detail panel, compare up to 3, bookmarks, zoom/pan/pinch, filters for status/size/budget/character); My Farm Journal preview + owner notify form |
 | `/portal` | The Portal — the project **aggregator**: sidebar filters (project / location / status), a South-India map with one pin per estate and click-to-read tooltips, and listing cards that stay in step with the filters (Mango Meadows, Coffee Canopy, Areca Vale, Pepper Hollow, Lantern Lake) |
 | `/community` | The Community — "Another chapter is being written." + Notify me |
 | `/agritech` | Agri-tech — "The instruments are being planted." + Notify me |
@@ -27,6 +27,14 @@ so `/about` serves `about.html`).
 - Hero video lazy-attaches its source on first scroll and hides itself on error
 - All below-the-fold images use `loading="lazy" decoding="async"`
 - `prefers-reduced-motion` respected everywhere
+- Exactly one ScrollTrigger site-wide (the home hero pin); everything else is
+  IntersectionObserver or rAF-throttled scroll math
+- Hero video: WebM first (drop `assets/hero.webm`, ≤8 MB) with MP4 fallback,
+  lazy-attached on first scroll; slow Ken Burns drift via CSS
+- Unsplash imagery served with `auto=format` (AVIF/WebP negotiation) and
+  explicit dimensions on the hero to avoid CLS
+- Three.js scene uses `powerPreference: low-power`, pauses off-screen, and
+  disposes geometry/materials on `pagehide`
 
 ## Files
 

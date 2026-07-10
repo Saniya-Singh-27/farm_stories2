@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Projects — The Farm Stories</title>
 <meta name="description" content="Every project is a book. Open Story One: Mango Meadows, a boutique managed mango orchard community in the Nilgiris foothills.">
+<link rel="canonical" href="https://thefarmstories.estate/projects">
+<meta property="og:image" content="https://thefarmstories.estate/assets/logo.png">
 <meta name="theme-color" content="#F4EFE4">
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -123,6 +125,87 @@
     <p class="shelf-note reveal">Fourteen farms approached us this season. <em>One was admitted.</em> &nbsp;·&nbsp; <a href="/portal" style="font-style:normal;font-weight:700">See them all in the Portal →</a></p>
   </section>
 
+<!-- ═══════════ CHAPTER IV · THE LIBRARY / PLOT EXPLORER ═══════════ -->
+  <section class="chapter page" id="library">
+    <div class="chapter-head reveal"><span class="chapter-no">The plot explorer</span><h2 class="split">The Library of Plots</h2></div>
+    <p class="chapter-intro reveal">The Mango Meadows masterplan, drawn like the endpaper map of a novel — <em>every plot a page you can hold.</em> Zoom, wander, compare, and mark the ones that speak to you.</p>
+
+    <div class="explorer reveal">
+      <div class="explorer-toolbar" role="toolbar" aria-label="Plot explorer controls">
+        <div class="fgroup"><span class="flabel">Status</span>
+          <div class="fbtns" data-pfilter="status">
+            <button class="fbtn on" data-v="all">All</button>
+            <button class="fbtn" data-v="available">Available</button>
+            <button class="fbtn" data-v="reserved">Reserved</button>
+            <button class="fbtn" data-v="sold">Taken</button>
+          </div>
+        </div>
+        <div class="fgroup"><span class="flabel">Size</span>
+          <div class="fbtns" data-pfilter="size">
+            <button class="fbtn on" data-v="all">All</button>
+            <button class="fbtn" data-v="s">20–23 c</button>
+            <button class="fbtn" data-v="m">24–27 c</button>
+            <button class="fbtn" data-v="l">28–30 c</button>
+          </div>
+        </div>
+        <div class="fgroup"><span class="flabel">Budget</span>
+          <div class="fbtns" data-pfilter="budget">
+            <button class="fbtn on" data-v="all">All</button>
+            <button class="fbtn" data-v="a">₹60–75 L</button>
+            <button class="fbtn" data-v="b">₹75–90 L</button>
+            <button class="fbtn" data-v="c">₹90 L+</button>
+          </div>
+        </div>
+        <div class="fgroup"><span class="flabel">Character</span>
+          <div class="fbtns" data-pfilter="trait">
+            <button class="fbtn on" data-v="all">All</button>
+            <button class="fbtn" data-v="corner">Corner</button>
+            <button class="fbtn" data-v="stream">By the stream</button>
+            <button class="fbtn" data-v="view">Valley view</button>
+            <button class="fbtn" data-v="grove">Old grove</button>
+          </div>
+        </div>
+        <div class="fgroup"><span class="flabel">Lens</span>
+          <div class="fbtns">
+            <button class="fbtn" id="sunToggle" aria-pressed="false">☀ Sun path</button>
+            <button class="fbtn" id="viewToggle" aria-pressed="false">🛰 Terrain</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="explorer-body">
+        <div class="plan-wrap" id="planWrap">
+          <svg id="planSvg" viewBox="0 0 1000 720" role="img" aria-label="Interactive masterplan of the 26 plots at Mango Meadows"></svg>
+          <div class="plan-tip" id="planTip" role="status"></div>
+          <div class="plan-zoom" aria-hidden="false">
+            <button id="zoomIn" aria-label="Zoom in">+</button>
+            <button id="zoomOut" aria-label="Zoom out">−</button>
+            <button id="zoomReset" aria-label="Reset view">⌂</button>
+          </div>
+          <p class="plan-hint">drag to wander · scroll or pinch to lean closer</p>
+          <div class="plan-legend">
+            <span><i class="lg av"></i>Available</span>
+            <span><i class="lg rs"></i>Reserved</span>
+            <span><i class="lg sd"></i>Taken</span>
+            <span><i class="lg bm"></i>Bookmarked</span>
+          </div>
+        </div>
+
+        <aside class="plot-panel" id="plotPanel" aria-live="polite">
+          <div class="pp-empty" id="ppEmpty">
+            <div class="pg-orn">❦</div>
+            <p class="results-note" id="planNote">All 26 plots on the map.</p>
+            <p class="pp-whisper">Touch a plot on the map to read its page — its trees, its light, its distance from the stream.</p>
+            <p class="pp-scarcity" id="scarcityNote"></p>
+          </div>
+          <div class="pp-detail" id="ppDetail" hidden></div>
+          <div class="pp-compare" id="ppCompare" hidden></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  
   <section class="chapter page" id="diary">
     <div class="chapter-head reveal"><span class="chapter-no">For owners</span><h2 class="split">My Farm Journal</h2></div>
     <p class="chapter-intro reveal">Owners don't get dashboards. They get a journal — <em>drone flights, harvest counts, the agronomist's notes and every invoice, written into one record you can open from anywhere.</em></p>
@@ -178,6 +261,11 @@
         </div>
         <span class="stamp">A preview</span>
       </div>
+      <form class="notify" data-notify style="margin-top:34px;justify-content:center">
+        <label class="sr-only" for="nj-email">Email address</label>
+        <input id="nj-email" type="email" required placeholder="Your email — we'll write when the Journal opens for owners">
+        <button type="submit" class="btn btn-gold">Notify me</button>
+      </form>
     </div>
   </section>
 
@@ -195,6 +283,13 @@
   </div>
 </div>
 </main>
+
+<!-- the story's last line -->
+<section class="coda reveal" aria-label="Closing">
+  <h2>Every farm has a story.<br><em>Yours begins here.</em></h2>
+  <p>The shelf has room for a few more families.</p>
+  <a class="btn btn-ink" href="/#chapter">Write Your Chapter</a>
+</section>
 
 <footer class="page">
   <div class="colophon">
